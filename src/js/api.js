@@ -204,15 +204,15 @@ function _applyCover(imgEl, url) {
     imgEl.decoding = "async";
     const reveal = () => imgEl.classList.remove("hidden");
     imgEl.onload = reveal;
+    imgEl.onerror = () => imgEl.classList.add("hidden");
     if (imgEl.getAttribute("src") !== url) imgEl.src = url;
-    // A cached image may finish before `load` is dispatched (or the event can be
-    // starved during the bar-race animation loop), leaving it stuck `hidden`.
-    // decode() resolves once it's paintable — from cache or network — so it's a
-    // reliable safety net; complete/naturalWidth covers browsers without decode().
-    if (typeof imgEl.decode === "function") {
-        imgEl.decode().then(reveal).catch(() => {});
-    } else if (imgEl.complete && imgEl.naturalWidth > 0) {
+    // Fast path: cached or already loaded
+    if (imgEl.complete && imgEl.naturalWidth > 0) {
         reveal();
+    } else if (typeof imgEl.decode === "function") {
+        // Mobile Safari (WebKit) rejects decode() if element is display:none (hidden);
+        // catch(reveal) guarantees mobile browsers still reveal the image.
+        imgEl.decode().then(reveal).catch(reveal);
     }
 }
 

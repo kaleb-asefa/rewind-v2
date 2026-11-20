@@ -58,7 +58,7 @@ function initTopCard(config) {
         });
 
         try {
-            const res = await fetcher(`/api/metrics/top-${kind}`, {}, 5000);
+            const res = await fetcher(`/api/metrics/top-${kind}`, {}, 10000);
             const imgEl = document.getElementById(`top-${kind}-image`);
 
             if (res.ok && res.data && res.data.status === "ok") {
