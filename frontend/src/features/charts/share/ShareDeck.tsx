@@ -42,9 +42,9 @@ export default function ShareDeck({
   const dialog = useRef<HTMLDivElement>(null)
   const [deck, setDeck] = useState<Card[] | null>(null)
   const [index, setIndex] = useState(0)
-  const [repaint, setRepaint] = useState(0)
   const [busy, setBusy] = useState(false)
   const covers = useRef<Promise<void> | null>(null)
+  const paintRef = useRef(() => {})
   const canShare = typeof navigator !== 'undefined' && 'canShare' in navigator
 
   // Build once: wait for fonts (canvas text needs them loaded), load the data,
@@ -56,7 +56,7 @@ export default function ShareDeck({
       const data = await loadDeckData(queryClient, years)
       if (cancelled) return
       setDeck(buildDeck(data))
-      if (data) covers.current = attachCovers(data, () => !cancelled && setRepaint((n) => n + 1))
+      if (data) covers.current = attachCovers(data, () => !cancelled && paintRef.current())
     })()
     return () => {
       cancelled = true
@@ -99,13 +99,15 @@ export default function ShareDeck({
     el.style.width = `${Math.round(width)}px`
   }, [])
 
-  // `repaint` ticks when covers land, so the current card is redrawn with them.
-  // oxlint-disable-next-line react/exhaustive-effect-dependencies
   useLayoutEffect(() => {
-    void repaint
     paint(card)
     fit()
-  }, [card, repaint, paint, fit])
+  }, [card, paint, fit])
+
+  // Covers arrive after the deck is built: repaint whichever card is showing.
+  useEffect(() => {
+    paintRef.current = () => paint(card)
+  }, [card, paint])
 
   useEffect(() => {
     window.addEventListener('resize', fit)
