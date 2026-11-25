@@ -35,11 +35,16 @@ export function getSessionTicket(): string {
   return ticket
 }
 
-/** Replace the ticket with a new one (new upload, or after clearing data). */
-export function rotateSessionTicket(): string {
-  const ticket = generateUUID()
+/** Make `ticket` the active session (e.g. after an upload under it succeeded). */
+export function setSessionTicket(ticket: string): void {
   localStorage.setItem(SESSION_KEY, ticket)
   listeners.forEach((l) => l())
+}
+
+/** Replace the ticket with a new one (after clearing data). */
+export function rotateSessionTicket(): string {
+  const ticket = generateUUID()
+  setSessionTicket(ticket)
   return ticket
 }
 

@@ -61,3 +61,20 @@ export const MONTHS_SHORT = [
   'Nov',
   'Dec',
 ] as const
+
+/** "42 min" / "1h 5m" / "2h" (heatmap + overview cards). */
+export function fmtDuration(mins: number): string {
+  if (mins >= 60) {
+    const h = Math.floor(mins / 60)
+    const m = Math.round(mins % 60)
+    return m ? `${h}h ${m}m` : `${h}h`
+  }
+  return `${Math.round(mins)} min`
+}
+
+/** Local ISO date (YYYY-MM-DD) without UTC shifting. */
+export function isoLocal(date: Date): string {
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}-${m}-${d}`
+}

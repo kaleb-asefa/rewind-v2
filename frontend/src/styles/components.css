@@ -219,7 +219,7 @@ footer,
   background: var(--scrollbar-thumb);
   border-radius: 9999px;
 }
-#heatmap-tooltip {
+.heatmap-tooltip {
   position: fixed;
   z-index: 100;
   pointer-events: none;
@@ -234,14 +234,14 @@ footer,
   font-size: 11px;
   white-space: nowrap;
 }
-#heatmap-tooltip.visible {
+.heatmap-tooltip.visible {
   opacity: 1;
 }
-#heatmap-tooltip .count {
+.heatmap-tooltip .count {
   color: rgb(var(--accent-rgb));
   font-weight: 700;
 }
-#heatmap-tooltip .top {
+.heatmap-tooltip .top {
   color: var(--tooltip-muted);
   font-size: 10px;
 }

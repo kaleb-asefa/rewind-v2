@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, ScrollRestoration } from 'react-router'
+import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router'
 
 import { Icon } from '@/components/Icon'
 
@@ -124,6 +124,21 @@ function Footer() {
   )
 }
 
+/** Scroll to `#anchor` targets after client-side navigation (e.g. /#how-it-works). */
+function HashScroll() {
+  const { hash, pathname } = useLocation()
+  useEffect(() => {
+    if (!hash) return
+    const id = decodeURIComponent(hash.slice(1))
+    const t = setTimeout(
+      () => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }),
+      50,
+    )
+    return () => clearTimeout(t)
+  }, [hash, pathname])
+  return null
+}
+
 export function Layout() {
   return (
     <>
@@ -133,6 +148,7 @@ export function Layout() {
       </div>
       <Footer />
       <ScrollRestoration />
+      <HashScroll />
     </>
   )
 }
