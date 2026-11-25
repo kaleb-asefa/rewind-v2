@@ -5,10 +5,14 @@ services:
     ports:
       - "80:8000"
     volumes:
-      # Guest session databases survive container restarts
-      - ./data/sessions:/app/data/sessions
+      # Guest session databases survive restarts (auto-deleted after the TTL)
+      - sessions:/data/sessions
       # Optional, read-only: the 45M-track catalog for audio-feature enrichment
-      - ./data/metadata:/app/data/metadata:ro
+      - ./data/metadata:/data/metadata:ro
     environment:
       - REWIND_DUCKDB_MEMORY_LIMIT=2GB
+      - REWIND_SESSION_TTL_HOURS=48
     restart: unless-stopped
+
+volumes:
+  sessions:

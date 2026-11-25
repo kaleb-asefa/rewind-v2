@@ -17,7 +17,7 @@ What distinguishes Spotify is its pill-and-circle geometry. Primary buttons use 
 - Heavy shadows on elevated elements (`rgba(0,0,0,0.5) 0px 8px 24px`)
 - Semantic colors: negative red (`#f3727f`), warning orange (`#ffa42b`), announcement blue (`#539df5`)
 - Album art as the primary color source — the UI is achromatic by design
-- Robust dark mode state management (`src/js/theme.js`) with persistent `localStorage` preference and smooth theme toggling
+- Robust dark mode state management (`frontend/src/app/theme.ts`) with persistent `localStorage` preference and smooth theme toggling
 
 ## 2. Color Palette & Roles
 
@@ -58,7 +58,7 @@ The palette above is the **dark** theme. Both themes ship from one token set, so
 **nothing in the app hardcodes a colour** — not in CSS, not in a JS chart renderer.
 
 - **Where the tokens live:** `src/styles/main.css` — `:root` holds the light values,
-  `.dark` the dark ones. `src/js/theme.js` toggles `.dark`/`.light` on `<html>`
+  `.dark` the dark ones. `frontend/src/app/theme.ts` toggles `.dark`/`.light` on `<html>`
   (persisted in `localStorage`, defaults to the OS preference).
 - **Two families:**
   - `--color-*` — the Material-style roles (`surface`, `surface-container-*`,
@@ -68,13 +68,13 @@ The palette above is the **dark** theme. Both themes ship from one token set, so
     `--chip-*`, `--grid-line`, `--axis-label`, `--emphasis`, `--heatmap-empty`,
     `--hover-overlay`, `--accent-rgb`, … for everything a Tailwind utility can't express.
   Both blocks stay **symmetric**: a token added to one theme must be added to the other.
-- **Tailwind:** `src/js/tailwind_config.js` is the single shared CDN config (`darkMode:
+- **Tailwind:** `frontend/src/styles/index.css` (`@theme`) is the single Tailwind v4 config (`darkMode:
   'class'`) mapping every colour utility to `rgb(var(--color-<token>) / <alpha-value>)`.
   Load it **after** the Tailwind CDN script and **without `defer`**, before the page's own
   scripts. Pages must not re-declare their own inline config.
 - **In JS/SVG renderers:** use `var(--token)` — and `rgb(var(--accent-rgb))` for data fills
   (bars, spokes, gradients) so charts follow the theme. No `#1ed760` / `rgb(30,215,96)`
-  literals in `src/js/**`.
+  literals in `frontend/src/**`.
 
 ### Light theme — a canvas, not a lightbox
 

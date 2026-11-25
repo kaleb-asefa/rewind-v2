@@ -1,77 +1,68 @@
 # 🎵 Rewind
 
-**A fast, privacy-first Spotify listening data analytics & visualization dashboard.**
+**Private, deep analytics for your whole Spotify listening history.**
 
-Rewind allows you to go beyond Spotify Wrapped's once-a-year snapshot. By connecting your account or uploading your full Spotify **Extended Streaming History** export, Rewind transforms raw listening logs into deep insights, interactive visual trends, and comprehensive analytics.
+Spotify Wrapped covers one year. Rewind reads your complete **Extended Streaming
+History** export and turns it into:
+- an overview with an activity heatmap;
+- ranked charts with year-over-year movement and a shareable story-card deck;
+- an eleven-chapter deep dive covering when you listen, your sound, your taste, your
+  habits, discovery and more.
 
----
+![Rewind overview dashboard](frontend/src/assets/dashboard-preview.png)
 
-## 📸 Overview Dashboard
-
-![Rewind Overview Dashboard](src/styles/static/image.png)
-
----
-
-## ✨ Key Features & Insights
-
-- **⏱️ Total Listening Time** — Discover the total time spent streaming music, converted cleanly into hours, days, and minutes.
-- **🏆 Top Highlights** — See your top artist, top album, and top track across your history.
-- **🟩 Listening Heatmap** — GitHub-style daily activity map to spot streaming trends, peak music days, and listening streaks.
-- **🚫 Most Skipped / "Hated"** — Track the artists and songs you skip most frequently.
-- **📊 Listening Breadth** — View total unique songs played and active listening days.
-
----
-
-## 🏗️ How It Works (High-Level Architecture)
-
-Rewind is built with a lightweight frontend and an ultra-fast analytical data backend:
+## How it works
 
 ```
-┌─────────────────────────┐         HTTP / JSON API        ┌─────────────────────────┐
-│     Vanilla JS UI       │  ───────────────────────────►  │     FastAPI Backend     │
-│   (Tailwind CSS + Vite) │                                │  (DuckDB + SQLAlchemy)  │
-└─────────────────────────┘                                └─────────────────────────┘
+React SPA (Vite, TypeScript)  ──/api──▶  FastAPI  ──▶  one DuckDB file per guest session
+                                             │
+                                             └──▶  45M-track catalog (read-only Parquet) for audio features & genres
 ```
 
-1. **Lightweight Frontend UI**
-   - Built with **Vanilla HTML/JS** and **Tailwind CSS** for maximum speed and zero heavy framework bloat.
-   - Styled with a sleek, Spotify-inspired dark aesthetic (`#121212` dark theme and Spotify Green accents).
+- **No accounts.** Each browser gets a random session ticket. Your data sits in its own
+  database file. It's deleted after 48 hours idle, or right away when you click
+  **Delete my data**.
+- **Catalog optional.** Without the catalog (`data/metadata/catalog_sorted.parquet`),
+  audio features, genres and eras are skipped. Everything history-based still works.
+- **Covers** come from Spotify's public oEmbed endpoint, which needs no API key. Set
+  `REWIND_COVERS_ENABLED=false` to turn that off.
 
-2. **Analytical Data Engine (Backend)**
-   - Powered by **FastAPI** and **DuckDB** — an in-process analytical database designed specifically for lightning-fast queries over large datasets (such as years of raw JSON streaming logs).
-   - Session-scoped processing keeps data isolated and fast without complex server management.
+## Quick start
 
----
+Requirements: Python 3.13 with [uv](https://docs.astral.sh/uv/), and Node 22.
 
-## 🛠️ Tech Stack
-
-- **Frontend:** HTML5, Vanilla JavaScript, Tailwind CSS, Vite, Chart.js
-- **Backend:** Python, FastAPI, Uvicorn, DuckDB, SQLAlchemy Core
-- **Package Management:** `uv` (Python dependency management)
-
----
-
-## 🚀 Getting Started
-
-### 1. Backend Setup
 ```bash
-# Navigate to the backend directory
-cd backend
-
-# Install dependencies using uv
-uv sync
-
-# Run the FastAPI server
-uv run uvicorn main:app --reload
+make dev        # API on :8000 + web app on http://localhost:5173
 ```
-The API server will run at `http://127.0.0.1:8000`.
 
-### 2. Frontend Setup
+That's the same as running `make api` and `make web` in two terminals. For sample data,
+run `cd backend && uv run python scripts/make_sample_export.py sample` and upload the
+two files it writes.
+
+### Docker
+
 ```bash
-# From the project root, install frontend dependencies
-npm install
-
-# Run the Vite development server
-npm run dev
+docker compose up --build    # http://localhost
 ```
-Open `http://localhost:5173` in your browser.
+
+One image serves the API and the built SPA. To enable enrichment, put the catalog in
+`data/metadata/`.
+
+## Development
+
+| | |
+|---|---|
+| `make test` | Backend pytest + frontend Vitest |
+| `make lint` | ruff, mypy, oxlint, tsc |
+| `make types` | Regenerate the frontend API types from the backend's OpenAPI schema |
+| `cd frontend && npm run e2e` | Playwright end-to-end suite |
+
+## Docs
+
+- [Frontend](docs/FRONTEND.md)
+- [Backend](backend/README.md)
+- [API contract](docs/API_CONTRACT.md)
+- [Architecture and roadmap](docs/ARCHITECTURE.md)
+- [Design system](docs/design.md)
+- [UI guidelines](docs/UI_GUIDELINES.md)
+- [Data schema](docs/SCHEMA.md)

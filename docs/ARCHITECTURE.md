@@ -1,8 +1,16 @@
-# Rewind — Target Architecture Plan
+# Rewind — Architecture
 
-> Status: **planning / brainstorm** (not yet implemented). This is the agreed direction for
-> turning Rewind into a multi-user Spotify-Wrapped-style analytics app powered by a local
-> 45M-track metadata catalog. Nothing in this doc is wired up yet — it's the blueprint.
+> **Current state (v2).** What's built today:
+>
+> - **Frontend:** React + TypeScript SPA in `frontend/`. See [FRONTEND.md](FRONTEND.md).
+> - **Backend:** FastAPI in `backend/app/`, with a typed contract
+>   ([API_CONTRACT.md](API_CONTRACT.md)).
+> - **Storage:** the §6.3 "MVP shortcut". Each guest session is its own DuckDB file,
+>   deleted after the TTL or on request.
+> - **Catalog:** enrichment (§4) is built. Images (§5) are cached per session.
+>
+> Still roadmap: Postgres, accounts and the leaderboard (§6–§7), and a shared image
+> cache. The rest of this doc is the target design.
 
 ## 1. Vision
 

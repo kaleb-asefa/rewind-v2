@@ -1,11 +1,11 @@
 # Rewind — Charts (Numbered Leaderboards)
 
 Spec + idea catalog for the **Charts** feature.
-Status: **core + superlatives + share deck built** — `charts.html` with `src/js/charts.js`
+Status: **core + superlatives + share deck built** — `/charts` (`frontend/src/features/charts/`) with `Leaderboard.tsx`
 (Artists / Tracks / Albums / Genres, minutes/streams sort, all-time + per-year range, depth
 toggle, find-your-rank search, podium, movement arrows) on `GET /api/metrics/chart`;
-`src/js/charts_superlatives.js` (6 record cards, own year selector) on
-`GET /api/metrics/superlatives`; `src/js/charts_share.js` — a Wrapped-style deck drawn on a
+`Records.tsx` (6 record cards, own year selector) on
+`GET /api/metrics/superlatives`; `share/` (`cards.ts`, `ShareDeck.tsx`) — a Wrapped-style deck drawn on a
 raw `<canvas>` (intro, top artist/song heroes, top-5 lists, minutes, vibe, recap, plus one
 landscape recap card per recent year), saved per card or all at once. The creative charts in
 §3.3–§3.7 are **not built yet**.
@@ -35,7 +35,7 @@ Coverage tags: **[H]** = history-only, 100% coverage. **[C]** = needs `track_fea
 
 ## 2. Page & interaction model
 
-A dedicated **Charts page** (`charts.html`, navbar item after Overview / Explore).
+A dedicated **Charts page** (`/charts`, navbar item after Overview / Explore).
 
 **Shared shell for every chart:**
 - **Numbered rows** — big `#1…#100`, medal color for top 3.
@@ -169,7 +169,7 @@ GET /api/metrics/chart
 
 Frontend: one `charts.js` (or `charts/` namespace mirroring `explore/`) with a single
 `renderChart(items)` row renderer reused by every chart; all fetches via
-`window.fetchWithTimeout`; `esc()` names before `innerHTML`; `SAMPLE_*` fallback for [C] charts.
+typed `useApi()` hooks; React escapes text by default; no sample data on real pages.
 
 ---
 
