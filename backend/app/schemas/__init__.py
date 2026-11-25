@@ -13,7 +13,8 @@ CoverKind = Literal["artist", "album", "track"]
 
 
 class Model(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    # Response schemas mark defaulted fields as required: the API always sends them.
+    model_config = ConfigDict(extra="forbid", json_schema_serialization_defaults_required=True)
 
 
 class Ok(Model):

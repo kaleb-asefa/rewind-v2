@@ -1,0 +1,879 @@
+/* Component styles ported from v1 (legacy/src/styles/main.css). Class names are
+   kept so markup ports 1:1; Tailwind utilities still win (this file is in the
+   components layer). */
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+body,
+header,
+section,
+footer,
+.glass-player,
+.spotify-card {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-vinyl {
+  animation: rotate-slow 20s linear infinite;
+}
+
+/* Cassette / Rewind Deck hero */
+.cassette-deck {
+  transition: background-color 0.2s ease;
+}
+.reel-spin {
+  animation-name: rotate-slow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* Reels always turn backward, evoking a rewinding tape */
+  animation-direction: reverse;
+  transition: animation-duration 0.3s ease;
+}
+.cassette-deck.is-rewinding .reel-spin {
+  animation-duration: 0.25s !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-vinyl,
+  .reel-spin {
+    animation: none !important;
+  }
+}
+.glass-player {
+  background: transparent;
+}
+.btn-pill {
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.btn-pill-lg {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.spotify-card {
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+.dark .spotify-card:hover {
+  background-color: rgb(var(--c-surface-container-high));
+}
+.light .spotify-card:hover {
+  background-color: rgb(var(--c-surface-container));
+}
+.theme-icon {
+  transition:
+    transform 0.35s ease,
+    opacity 0.2s ease;
+}
+#theme-toggle:active .theme-icon {
+  transform: rotate(30deg) scale(0.9);
+}
+
+/* Hairline divider/border that stays visible on both themes — `border-white/5`
+   is invisible on a white surface. */
+.border-hairline {
+  border-color: var(--card-border);
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.glass-card:hover {
+  background: var(--card-bg-hover);
+}
+.metric-gradient {
+  background: var(--metric-gradient);
+  border-color: var(--metric-gradient-border);
+}
+
+/* GitHub-Style Listening Activity Heatmap */
+.heatmap-wrap {
+  font-size: 11px;
+  line-height: 1;
+  width: 100%;
+}
+.heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--weeks-count, 53), minmax(0, 1fr));
+  grid-auto-flow: column;
+  gap: var(--cell-gap, 3px);
+  width: 100%;
+  flex: 1;
+}
+.heatmap-cell {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--heatmap-empty);
+  /* Inset rather than a border/outline: it keeps the cell box the same size
+       (so the grid can't reflow) and survives the legend swatches, which set
+       outline:none inline to suppress the hover ring. */
+  box-shadow: inset 0 0 0 1px var(--heatmap-ring);
+  cursor: pointer;
+  outline: none;
+  transition:
+    outline 0.1s ease,
+    transform 0.1s ease;
+}
+.heatmap-cell:hover,
+.heatmap-cell:focus-visible {
+  outline: 1px solid var(--heatmap-outline);
+  outline-offset: 1px;
+  transform: scale(1.2);
+  z-index: 10;
+  position: relative;
+}
+.heatmap-cell[data-level='1'] {
+  background: rgba(var(--accent-rgb), 0.22);
+}
+.heatmap-cell[data-level='2'] {
+  background: rgba(var(--accent-rgb), 0.45);
+}
+.heatmap-cell[data-level='3'] {
+  background: rgba(var(--accent-rgb), 0.68);
+}
+.heatmap-cell[data-level='4'] {
+  background: rgb(var(--accent-rgb));
+}
+.heatmap-cell[data-future='true'],
+.heatmap-cell[data-padding='true'] {
+  visibility: hidden;
+  pointer-events: none;
+}
+.heatmap-months {
+  display: grid;
+  grid-template-columns: repeat(var(--weeks-count, 53), minmax(0, 1fr));
+  gap: var(--cell-gap, 3px);
+  height: 16px;
+  margin-left: calc(28px + 8px);
+  margin-bottom: 6px;
+  position: relative;
+  width: calc(100% - 36px);
+}
+.heatmap-month {
+  grid-row: 1;
+  color: rgb(var(--c-on-surface-variant));
+  font-size: 10px;
+  white-space: nowrap;
+  align-self: end;
+}
+.heatmap-body {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  align-items: stretch;
+}
+.heatmap-days {
+  display: grid;
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  gap: var(--cell-gap, 3px);
+  width: 28px;
+  flex-shrink: 0;
+}
+.heatmap-day {
+  color: rgb(var(--c-on-surface-variant));
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.heatmap-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+.heatmap-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.heatmap-scroll::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
+}
+#heatmap-tooltip {
+  position: fixed;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
+  border: 1px solid var(--tooltip-border);
+  box-shadow: var(--tooltip-shadow);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+#heatmap-tooltip.visible {
+  opacity: 1;
+}
+#heatmap-tooltip .count {
+  color: rgb(var(--accent-rgb));
+  font-weight: 700;
+}
+#heatmap-tooltip .top {
+  color: var(--tooltip-muted);
+  font-size: 10px;
+}
+
+/* Rank Velocity Trajectory Component Styles */
+.rank-path {
+  fill: none;
+  stroke-width: 3.2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.95;
+  filter: var(--data-shadow);
+}
+
+.tip-container {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition:
+    left 0.1s linear,
+    top 0.1s linear;
+  z-index: 20;
+  will-change: left, top;
+  user-select: none;
+  pointer-events: none;
+}
+
+.tip-avatar-ring {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  padding: 2px;
+  background: var(--chip-bg);
+  box-shadow: var(--card-shadow-strong);
+  position: relative;
+}
+
+.rank-badge-pill {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: var(--chip-bg);
+  border: 1.5px solid currentColor;
+  color: var(--chip-fg);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 9999px;
+  box-shadow: var(--chip-shadow);
+  line-height: 1;
+}
+
+.tip-title-tag {
+  position: absolute;
+  left: 46px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  padding: 2.5px 7.5px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--chip-fg);
+  box-shadow: var(--chip-shadow);
+  backdrop-filter: blur(8px);
+  opacity: 0.95;
+}
+
+/* The share deck scrolls whenever the viewport is short. Reserving the gutter
+   up front means the scrollbar appearing can never reflow the deck under the
+   pointer — that reflow is what made the action buttons flicker: a hover that
+   grew a button overflowed the container, the scrollbar took width, the row
+   shifted out from under the cursor, the hover dropped, and it looped. The
+   buttons no longer resize on hover, and this keeps any future reflow (a
+   changing button label, a taller card) from bringing the flicker back. */
+.share-scroller {
+  scrollbar-gutter: stable both-edges;
+  overscroll-behavior: contain;
+}
+
+/* Native range inputs render with the UA accent (blue) unless fully restyled,
+   which made the scrubber the one control ignoring the design system in both
+   themes. This is also what --scrubber-knob was declared for. */
+.velocity-scrubber {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--grid-line-strong);
+  accent-color: rgb(var(--accent-rgb));
+}
+.velocity-scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: rgb(var(--accent-rgb));
+  border: 2px solid rgb(var(--scrubber-knob));
+  box-shadow: var(--pill-shadow);
+  cursor: pointer;
+}
+.velocity-scrubber::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: rgb(var(--accent-rgb));
+  border: 2px solid rgb(var(--scrubber-knob));
+  box-shadow: var(--pill-shadow);
+  cursor: pointer;
+}
+.velocity-scrubber::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--grid-line-strong);
+}
+.velocity-scrubber:focus-visible {
+  outline: 2px solid rgb(var(--c-primary));
+  outline-offset: 3px;
+}
+
+.pulse-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid rgb(var(--accent-rgb));
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.18);
+  }
+}
+
+.glass-card:fullscreen {
+  background: var(--fullscreen-bg);
+  padding: 1.5rem;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  overflow-y: auto;
+}
+
+/* ── Explore: scrollytelling chapters ─────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+.reveal-init {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.reveal-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal-init,
+  .reveal-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* sticky chapter rail pills */
+.chapter-pill {
+  color: rgb(var(--c-on-surface-variant));
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.chapter-pill:hover {
+  color: rgb(var(--c-on-surface));
+}
+.chapter-pill .num {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.82;
+}
+.chapter-pill--active {
+  background: rgb(var(--c-primary));
+  color: rgb(var(--c-on-primary));
+  box-shadow: var(--pill-shadow);
+}
+.chapter-pill--active .num {
+  opacity: 0.85;
+}
+.chapter-pill--soon {
+  opacity: 0.4;
+}
+.chapter-pill--soon:hover {
+  color: rgb(var(--c-on-surface-variant));
+}
+
+/* Chapter rail track: hidden scrollbar; edges fade out only when it overflows.
+   Auto-scrolls the active pill into view from core.js (scroll-spy). */
+.chapter-rail-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+}
+.chapter-rail-track::-webkit-scrollbar {
+  display: none;
+}
+.chapter-rail-track.is-scrollable {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .chapter-rail-track {
+    scroll-behavior: auto;
+  }
+}
+
+/* Year filter — one selection for the whole Explore page. Sits beside the
+   chapter rail and keeps its pill geometry; green marks the active year only. */
+.year-pill {
+  color: rgb(var(--c-on-surface-variant));
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.year-pill:hover {
+  color: rgb(var(--c-on-surface));
+}
+.year-pill--active {
+  background: rgb(var(--c-primary));
+  color: rgb(var(--c-on-primary));
+  border-color: transparent;
+  box-shadow: var(--pill-shadow);
+}
+.year-caret {
+  transition: transform 0.2s ease;
+}
+.year-filter.is-open .year-caret {
+  transform: rotate(180deg);
+}
+
+.year-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  display: none;
+  min-width: 160px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+.year-filter.is-open .year-menu {
+  display: block;
+}
+.year-option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: rgb(var(--c-on-surface-variant));
+  text-align: left;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+.year-option:hover {
+  background: rgb(var(--c-surface-container-highest));
+  color: rgb(var(--c-on-surface));
+}
+.year-option-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.year-option-sub {
+  font-size: 10px;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+.year-option--active,
+.year-option--active:hover {
+  background: rgb(var(--c-primary));
+  color: rgb(var(--c-on-primary));
+}
+.year-option--active .year-option-sub {
+  opacity: 0.8;
+}
+
+/* A chapter waiting on a year switch: dimmed and inert, so last year's numbers
+   are never mistaken for the year being loaded. */
+.chapter-busy {
+  opacity: 0.35;
+  filter: saturate(0.5);
+  pointer-events: none;
+  transition:
+    opacity 0.18s ease,
+    filter 0.18s ease;
+}
+
+/* Inline "?" help buttons + click-to-open popover (explains derived categories) */
+.help {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  cursor: pointer;
+  border-radius: 9999px;
+  background: transparent;
+  color: rgb(var(--c-on-surface-variant));
+  opacity: 0.55;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+.help-btn:hover,
+.help-btn.is-open {
+  opacity: 1;
+  color: rgb(var(--c-primary));
+  background: rgb(var(--c-primary) / 0.12);
+}
+.help-btn .material-symbols-outlined {
+  font-size: 17px;
+  line-height: 1;
+}
+.help-content {
+  display: none;
+}
+.help-pop {
+  position: fixed;
+  z-index: 70;
+  width: 288px;
+  max-width: calc(100vw - 24px);
+  background: rgb(var(--c-surface-container-high));
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: var(--card-shadow-strong);
+  color: rgb(var(--c-on-surface-variant));
+  font-size: 13px;
+  line-height: 1.55;
+  animation: helpPopIn 0.14s ease;
+}
+@keyframes helpPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.help-pop .help-title {
+  font-weight: 700;
+  color: rgb(var(--c-on-surface));
+  margin-bottom: 6px;
+}
+.help-pop p {
+  margin: 0 0 8px;
+}
+.help-pop p:last-child {
+  margin-bottom: 0;
+}
+.help-pop .help-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.help-pop .help-list li {
+  position: relative;
+  padding-left: 15px;
+}
+.help-pop .help-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: rgb(var(--c-primary));
+}
+.help-pop b {
+  color: rgb(var(--c-on-surface));
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .help-pop {
+    animation: none;
+  }
+}
+
+/* radial listening clock */
+.clock-bar {
+  stroke-linecap: round;
+}
+
+/* rhythm chart hover interactivity */
+.clock-bar {
+  transition:
+    stroke 0.15s ease,
+    stroke-opacity 0.15s ease,
+    stroke-width 0.15s ease;
+}
+.clock-bar.is-hover {
+  stroke: var(--emphasis);
+  stroke-opacity: 1;
+  stroke-width: 9;
+}
+.clock-hit,
+.season-hit {
+  cursor: pointer;
+}
+#season-dot,
+#season-vline {
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+.weekday-col:hover .weekday-bar {
+  background: rgb(var(--accent-rgb));
+}
+
+/* chapter 03 charts */
+.mood-dot {
+  cursor: pointer;
+  transition: fill 0.12s ease;
+}
+.mood-dot.is-hover {
+  fill: var(--emphasis);
+}
+.mood-seg {
+  cursor: pointer;
+  transition: filter 0.12s ease;
+}
+.mood-seg:hover {
+  filter: brightness(1.15);
+}
+
+/* chapter 04 taste */
+.genre-row .genre-bar-fill {
+  transition:
+    width 0.5s ease,
+    filter 0.12s ease;
+}
+.genre-row:hover .genre-bar-fill {
+  filter: brightness(1.15);
+}
+.genre-row:hover .genre-name {
+  color: var(--emphasis);
+}
+.era-col:hover .era-bar {
+  background: rgb(var(--accent-rgb));
+}
+.gem-row {
+  transition: background 0.12s ease;
+}
+.gem-row:hover {
+  background: var(--hover-overlay-strong);
+}
+
+/* chapter 07 listening-life milestones */
+.life-milestone-line {
+  height: 2px;
+  background: rgba(var(--accent-rgb), 0.28);
+}
+.life-milestone-dot {
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+.life-milestone:hover .life-milestone-dot {
+  transform: scale(1.22);
+  box-shadow: 0 0 0 5px rgba(var(--accent-rgb), 0.14);
+}
+
+/* chapter 08 over-time */
+.year-tab {
+  color: rgb(var(--c-on-surface-variant));
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+.year-tab:hover {
+  color: rgb(var(--c-on-surface));
+}
+.year-tab--active {
+  background: rgb(var(--c-primary));
+  color: rgb(var(--c-on-primary));
+}
+.nostalgia-hit {
+  cursor: pointer;
+}
+#nostalgia-dot,
+#nostalgia-vline {
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+/* chapter 09 evolution */
+.genre-evo-seg {
+  cursor: pointer;
+  transition: filter 0.12s ease;
+}
+.genre-evo-seg:hover {
+  filter: brightness(1.2);
+}
+.evo-hit {
+  cursor: pointer;
+}
+.evo-dot {
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+/* chapter 10 sound detail */
+.tempo-bar {
+  transition: background 0.15s ease;
+}
+.tempo-col:hover .tempo-bar {
+  background: rgb(var(--accent-rgb));
+}
+
+.rhythm-tooltip {
+  position: fixed;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
+  border: 1px solid var(--tooltip-border);
+  box-shadow: var(--tooltip-shadow);
+  border-radius: 8px;
+  padding: 7px 11px;
+  font-size: 12px;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.25;
+}
+.rhythm-tooltip.visible {
+  opacity: 1;
+}
+.rhythm-tooltip .rt-title {
+  font-weight: 700;
+}
+.rhythm-tooltip .rt-val {
+  color: rgb(var(--accent-rgb));
+  font-size: 11px;
+  font-weight: 600;
+}
+/* ── Charts page: numbered leaderboards ───────────────────────── */
+.chart-tab,
+.chart-sort,
+.depth-btn,
+.range-tab {
+  color: rgb(var(--c-on-surface-variant));
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.chart-tab:hover,
+.chart-sort:hover,
+.depth-btn:hover,
+.range-tab:hover {
+  color: rgb(var(--c-on-surface));
+}
+.chart-tab.is-active,
+.chart-sort.is-active,
+.depth-btn.is-active,
+.range-tab.is-active {
+  background: rgb(var(--c-primary));
+  color: rgb(var(--c-on-primary));
+  box-shadow: var(--pill-shadow);
+}
+
+.chart-row {
+  transition: background 0.12s ease;
+}
+.chart-row:hover {
+  background: var(--hover-overlay);
+}
+.chart-row--match {
+  background: rgba(var(--accent-rgb), 0.1);
+  box-shadow: inset 3px 0 0 0 rgb(var(--accent-rgb));
+}
+.chart-row--match:hover {
+  background: rgba(var(--accent-rgb), 0.14);
+}

@@ -1,0 +1,243 @@
+/* Rewind design tokens — ported verbatim from v1 (legacy/src/styles/main.css).
+   RGB-channel colours are named --c-* (v1: --color-*) because Tailwind v4 owns
+   the --color-* namespace; index.css maps them into Tailwind's theme. */
+
+/* LIGHT THEME — canvas-based elevation.
+   Light mode is not an inverted dark mode. Elevation here runs the opposite
+   way: the page canvas is the *darkest* light surface and each level lifts
+   toward white, carried by a soft shadow. Cards must therefore be brighter
+   than the background they sit on.
+
+   Nothing is pure white and no text is pure black. A #fff canvas under
+   #121212 text is ~18.9:1 — far past the AA it needs, and the glare is what
+   makes a light theme tiring to read. The ramp below tops out at #fcfcfa for
+   the highest elevation only (dialogs, tooltips), keeps the canvas near
+   #e8e7e3, and carries a faint warm tint so large areas read as paper rather
+   than as a lightbox. */
+:root {
+  --c-background: 232 231 227;
+  --c-surface: 244 243 240;
+  --c-surface-dim: 222 221 216;
+  --c-surface-bright: 250 250 248;
+  --c-surface-container-lowest: 252 252 250;
+  --c-surface-container-low: 240 239 235;
+  --c-surface-container: 235 234 230;
+  --c-surface-container-high: 227 226 221;
+  --c-surface-container-highest: 219 218 212;
+  --c-surface-variant: 237 236 232;
+  --c-on-background: 35 35 32;
+  --c-on-surface: 35 35 32;
+  --c-on-surface-variant: 69 69 64;
+  --c-outline: 138 137 131;
+  --c-outline-variant: 214 213 207;
+  /* Spotify Green is unreadable as text on a light surface (2.6:1), so the
+       accent deepens to clear AA on every surface in the ramp above. Filled
+       controls drop from the neon #1ed760 to the classic #1db954, which is
+       far less strident on a pale page and still takes a black label. */
+  --c-primary: 14 107 49;
+  --c-on-primary: 255 255 255;
+  --c-primary-container: 29 185 84;
+  --c-on-primary-container: 18 18 18;
+  --c-secondary: 69 69 64;
+  --c-on-secondary: 255 255 255;
+  --c-secondary-container: 237 236 232;
+  --c-on-secondary-container: 35 35 32;
+  --c-tertiary: 69 69 64;
+  --c-on-tertiary: 255 255 255;
+  --c-tertiary-container: 219 218 212;
+  --c-on-tertiary-container: 35 35 32;
+  --c-error: 179 23 47;
+  --c-on-error: 255 255 255;
+  --c-error-container: 250 223 226;
+  --c-on-error-container: 110 18 32;
+  --c-inverse-surface: 35 35 32;
+  --c-inverse-on-surface: 250 250 248;
+  --c-inverse-primary: 30 215 96;
+  --c-surface-tint: 29 185 84;
+  --c-primary-fixed: 30 215 96;
+  --c-on-primary-fixed: 18 18 18;
+  --c-primary-fixed-dim: 29 185 84;
+  --c-on-primary-fixed-variant: 18 18 18;
+  --c-secondary-fixed: 237 236 232;
+  --c-on-secondary-fixed: 35 35 32;
+  --c-secondary-fixed-dim: 219 218 212;
+  --c-on-secondary-fixed-variant: 69 69 64;
+  --c-tertiary-fixed: 237 236 232;
+  --c-on-tertiary-fixed: 35 35 32;
+  --c-tertiary-fixed-dim: 219 218 212;
+  --c-on-tertiary-fixed-variant: 69 69 64;
+  --glass-bg: rgba(240, 239, 235, 0.78);
+  --glass-border: rgba(0, 0, 0, 0.07);
+  --scrubber-knob: 252 252 250;
+  --hero-glow: rgba(29, 185, 84, 0.1);
+  --vinyl-opacity: 0.12;
+  --heatmap-empty: #ffffff;
+  --heatmap-ring: rgba(0, 0, 0, 0.09);
+
+  /* Component tokens — every hardcoded colour below lives here so that
+       cards, tooltips, hovers and chart chrome follow the active theme.
+       Light surfaces use soft, low-opacity shadows; the heavy 0.3–0.5 shadows
+       from docs/design.md are a dark-surface elevation device and turn muddy
+       on paper. Because the canvas is tinted rather than white, these shadows
+       actually register, which is what separates a card from the page. */
+  --card-bg: rgba(250, 250, 247, 0.82);
+  --card-bg-hover: #edece8;
+  --card-border: rgba(0, 0, 0, 0.07);
+  --card-shadow: rgba(0, 0, 0, 0.07) 0px 6px 16px;
+  --card-shadow-strong: rgba(0, 0, 0, 0.1) 0px 8px 24px;
+  --fullscreen-bg: #f4f3f0;
+  --metric-gradient: linear-gradient(135deg, #f7f6f3 0%, #e2efe7 100%);
+  --metric-gradient-border: rgba(14, 107, 49, 0.18);
+  /* Hover washes: tint toward the opposite end of the surface ramp. */
+  --hover-overlay: rgba(0, 0, 0, 0.04);
+  --hover-overlay-strong: rgba(0, 0, 0, 0.055);
+  /* Maximum-contrast text/stroke used to highlight a hovered data point. */
+  --emphasis: #232320;
+  --scrollbar-thumb: #cbcac3;
+  --heatmap-outline: rgba(0, 0, 0, 0.42);
+  /* Floating chips stay dark in both themes: a high-contrast chip over the
+       page reads as a deliberate overlay and keeps the green accent legible. */
+  --tooltip-bg: #252525;
+  --tooltip-fg: #ffffff;
+  --tooltip-muted: rgba(255, 255, 255, 0.7);
+  --tooltip-border: rgba(255, 255, 255, 0.08);
+  --tooltip-shadow: rgba(0, 0, 0, 0.28) 0px 8px 24px;
+  --chip-bg: #fbfbf9;
+  --chip-fg: #232320;
+  --chip-border: rgba(0, 0, 0, 0.1);
+  --chip-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  --pill-shadow: rgba(0, 0, 0, 0.1) 0px 4px 10px;
+  --data-shadow: drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.14));
+  /* Chart chrome — gridlines, axis labels and text halos for the SVG/DOM
+       charts built in src/js/**. Referenced as var() from JS so a theme toggle
+       restyles an already-rendered chart without a re-render. */
+  --grid-line: rgba(0, 0, 0, 0.08);
+  --grid-line-strong: rgba(0, 0, 0, 0.12);
+  --axis-label: rgba(0, 0, 0, 0.6);
+  --text-halo: 0 1px 3px rgba(250, 250, 247, 0.85);
+  --bar-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /* Bar-race ramp: one fixed shade per racer. Light mode anchors darker so
+       every bar keeps contrast against a white surface. */
+  --race-1: #1db954;
+  --race-2: #15a247;
+  --race-3: #2ec566;
+  --race-4: #0f8b3b;
+  --race-5: #26b35b;
+  --race-6: #128f42;
+  --race-7: #0b7530;
+  --race-8: #1aa64e;
+  /* Sequential genre ramp (single hue, fading). Light mode fades a deeper
+       green toward white so the faintest band stays visible. */
+  /* Brand accent for data fills/strokes, kept apart from --c-primary
+       (text) because a graphic only needs 3:1. Light mode steps off the neon
+       #1ed760, which sits at 2.6:1 on paper and glares next to it. */
+  --accent-rgb: 23, 143, 66;
+  --genre-1: #0f8b3b;
+  --genre-2: rgba(15, 139, 59, 0.8);
+  --genre-3: rgba(15, 139, 59, 0.62);
+  --genre-4: rgba(15, 139, 59, 0.46);
+  --genre-5: rgba(15, 139, 59, 0.32);
+  --genre-6: rgba(15, 139, 59, 0.2);
+}
+
+.dark {
+  --c-background: 18 18 18;
+  --c-surface: 18 18 18;
+  --c-surface-dim: 18 18 18;
+  --c-surface-bright: 31 31 31;
+  --c-surface-container-lowest: 18 18 18;
+  --c-surface-container-low: 24 24 24;
+  --c-surface-container: 31 31 31;
+  --c-surface-container-high: 37 37 37;
+  --c-surface-container-highest: 39 39 39;
+  --c-surface-variant: 37 37 37;
+  --c-on-background: 255 255 255;
+  --c-on-surface: 255 255 255;
+  --c-on-surface-variant: 179 179 179;
+  --c-outline: 77 77 77;
+  --c-outline-variant: 37 37 37;
+  --c-primary: 30 215 96;
+  --c-on-primary: 0 0 0;
+  --c-primary-container: 29 185 84;
+  --c-on-primary-container: 18 18 18;
+  --c-secondary: 179 179 179;
+  --c-on-secondary: 18 18 18;
+  --c-secondary-container: 31 31 31;
+  --c-on-secondary-container: 255 255 255;
+  --c-tertiary: 179 179 179;
+  --c-on-tertiary: 18 18 18;
+  --c-tertiary-container: 37 37 37;
+  --c-on-tertiary-container: 255 255 255;
+  --c-error: 243 114 127;
+  --c-on-error: 18 18 18;
+  --c-error-container: 80 20 30;
+  --c-on-error-container: 255 218 220;
+  --c-inverse-surface: 255 255 255;
+  --c-inverse-on-surface: 18 18 18;
+  --c-inverse-primary: 29 185 84;
+  --c-surface-tint: 30 215 96;
+  --c-primary-fixed: 30 215 96;
+  --c-on-primary-fixed: 0 0 0;
+  --c-primary-fixed-dim: 29 185 84;
+  --c-on-primary-fixed-variant: 255 255 255;
+  --c-secondary-fixed: 31 31 31;
+  --c-on-secondary-fixed: 255 255 255;
+  --c-secondary-fixed-dim: 37 37 37;
+  --c-on-secondary-fixed-variant: 179 179 179;
+  --c-tertiary-fixed: 31 31 31;
+  --c-on-tertiary-fixed: 255 255 255;
+  --c-tertiary-fixed-dim: 37 37 37;
+  --c-on-tertiary-fixed-variant: 179 179 179;
+  --glass-bg: rgba(24, 24, 24, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --scrubber-knob: 18 18 18;
+  --hero-glow: rgba(30, 215, 96, 0.08);
+  --vinyl-opacity: 0.25;
+  --heatmap-empty: #1f1f1f;
+  --heatmap-ring: rgba(255, 255, 255, 0.06);
+
+  --card-bg: rgba(28, 27, 27, 0.85);
+  --card-bg-hover: #1f1f1f;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-shadow: rgba(0, 0, 0, 0.3) 0px 8px 8px;
+  --card-shadow-strong: rgba(0, 0, 0, 0.5) 0px 8px 24px;
+  --fullscreen-bg: #121212;
+  --metric-gradient: linear-gradient(135deg, #181818 0%, #1a2e1f 100%);
+  --metric-gradient-border: rgba(30, 215, 96, 0.12);
+  --hover-overlay: rgba(255, 255, 255, 0.04);
+  --hover-overlay-strong: rgba(255, 255, 255, 0.05);
+  --emphasis: #ffffff;
+  --scrollbar-thumb: #353535;
+  --heatmap-outline: rgba(255, 255, 255, 0.55);
+  --tooltip-bg: #252525;
+  --tooltip-fg: #ffffff;
+  --tooltip-muted: rgba(255, 255, 255, 0.7);
+  --tooltip-border: rgba(255, 255, 255, 0.08);
+  --tooltip-shadow: rgba(0, 0, 0, 0.5) 0px 8px 24px;
+  --chip-bg: #121212;
+  --chip-fg: #ffffff;
+  --chip-border: rgba(255, 255, 255, 0.15);
+  --chip-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+  --pill-shadow: rgba(0, 0, 0, 0.3) 0px 4px 10px;
+  --data-shadow: drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.6));
+  --grid-line: rgba(255, 255, 255, 0.06);
+  --grid-line-strong: rgba(255, 255, 255, 0.1);
+  --axis-label: rgba(255, 255, 255, 0.45);
+  --text-halo: 0 1px 3px rgba(0, 0, 0, 0.7);
+  --bar-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+  --race-1: #6ef58e;
+  --race-2: #53e076;
+  --race-3: #3fce68;
+  --race-4: #1db954;
+  --race-5: #2bbf63;
+  --race-6: #57cf7e;
+  --race-7: #149c46;
+  --race-8: #39d06e;
+  --accent-rgb: 30, 215, 96;
+  --genre-1: #1ed760;
+  --genre-2: rgba(30, 215, 96, 0.78);
+  --genre-3: rgba(30, 215, 96, 0.6);
+  --genre-4: rgba(30, 215, 96, 0.44);
+  --genre-5: rgba(30, 215, 96, 0.3);
+  --genre-6: rgba(30, 215, 96, 0.18);
+}

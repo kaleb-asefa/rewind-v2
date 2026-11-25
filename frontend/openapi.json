@@ -31,6 +31,7 @@
           }
         },
         "required": [
+          "status",
           "weekday",
           "average_minutes",
           "total_minutes"
@@ -114,6 +115,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "start_month",
           "end_month",
           "total_months",
@@ -200,6 +203,10 @@
           }
         },
         "required": [
+          "id",
+          "cover_kind",
+          "cover_id",
+          "image_url",
           "rank",
           "artist_name",
           "total_streams",
@@ -327,11 +334,17 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "avg",
+          "tempo_avg",
+          "mode",
           "tracks",
           "coverage",
           "matched",
-          "total"
+          "total",
+          "catalog_missing",
+          "has_history"
         ],
         "title": "Audio",
         "type": "object"
@@ -447,11 +460,14 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "start_month",
           "end_month",
           "total_months",
           "months",
           "entity",
+          "unit",
           "data"
         ],
         "title": "BarRace",
@@ -541,8 +557,13 @@
           }
         },
         "required": [
+          "id",
+          "cover_kind",
+          "cover_id",
+          "image_url",
           "rank",
           "name",
+          "artist_name",
           "total_minutes",
           "cumulative_minutes"
         ],
@@ -607,6 +628,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "shuffle",
           "skip_rate",
           "longest_binge_min",
@@ -747,6 +770,7 @@
           }
         },
         "required": [
+          "status",
           "entity",
           "sort",
           "range",
@@ -852,6 +876,10 @@
           }
         },
         "required": [
+          "id",
+          "cover_kind",
+          "cover_id",
+          "image_url",
           "rank",
           "name",
           "artist",
@@ -999,6 +1027,10 @@
             ]
           }
         },
+        "required": [
+          "morning",
+          "night"
+        ],
         "title": "DayNight",
         "type": "object"
       },
@@ -1064,6 +1096,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "concentration",
           "album_commitment",
           "top_day_track",
@@ -1120,6 +1154,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "new_artist_share",
           "new_artists_monthly",
           "one_off_share",
@@ -1202,7 +1238,11 @@
           }
         },
         "required": [
-          "status"
+          "status",
+          "reason",
+          "matched",
+          "total",
+          "coverage"
         ],
         "title": "Enrichment",
         "type": "object"
@@ -1275,6 +1315,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "genre_evolution",
           "mood_trend",
           "day_night",
@@ -1377,6 +1419,7 @@
           }
         },
         "required": [
+          "status",
           "catalog"
         ],
         "title": "Health",
@@ -1438,8 +1481,13 @@
           }
         },
         "required": [
+          "status",
           "years",
           "year",
+          "active_days",
+          "total_streams",
+          "total_minutes",
+          "max_streams",
           "days"
         ],
         "title": "Heatmap",
@@ -1520,6 +1568,7 @@
           }
         },
         "required": [
+          "status",
           "image_url"
         ],
         "title": "ImageResult",
@@ -1550,6 +1599,7 @@
           }
         },
         "required": [
+          "status",
           "images"
         ],
         "title": "ImagesResult",
@@ -1616,6 +1666,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "peaks",
           "typical_session_minutes",
           "session_mix",
@@ -2058,6 +2110,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "years",
           "music_age",
           "time_machine",
@@ -2218,6 +2272,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "hourly",
           "peak_hour",
           "weekday",
@@ -2276,6 +2332,7 @@
           }
         },
         "required": [
+          "status",
           "deleted"
         ],
         "title": "SessionDeleted",
@@ -2405,6 +2462,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "tempo",
           "key",
           "danceable",
@@ -2487,6 +2546,7 @@
           }
         },
         "required": [
+          "status",
           "range",
           "obsession",
           "binges",
@@ -2588,12 +2648,16 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "genres",
           "mainstream",
           "distinct_genres",
           "eras",
           "avg_year",
-          "gems"
+          "gems",
+          "catalog_missing",
+          "has_history"
         ],
         "title": "Taste",
         "type": "object"
@@ -2730,6 +2794,7 @@
           }
         },
         "required": [
+          "status",
           "album_name",
           "artist_name",
           "album_id",
@@ -2809,6 +2874,7 @@
           }
         },
         "required": [
+          "status",
           "artist_name",
           "artist_id",
           "cover_kind",
@@ -2912,6 +2978,7 @@
           }
         },
         "required": [
+          "status",
           "track_name",
           "artist_name",
           "track_id",
@@ -2936,6 +3003,7 @@
           }
         },
         "required": [
+          "status",
           "total_songs"
         ],
         "title": "TotalSongs",
@@ -2956,6 +3024,7 @@
           }
         },
         "required": [
+          "status",
           "total_minutes"
         ],
         "title": "TotalTime",
@@ -3059,6 +3128,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "start_month",
           "end_month",
           "total_months",
@@ -3156,6 +3227,10 @@
           }
         },
         "required": [
+          "id",
+          "cover_kind",
+          "cover_id",
+          "image_url",
           "rank",
           "track_name",
           "artist_name",
@@ -3192,6 +3267,7 @@
           }
         },
         "required": [
+          "status",
           "message",
           "files_processed",
           "total_rows",
@@ -3269,6 +3345,8 @@
           }
         },
         "required": [
+          "status",
+          "year",
           "personality"
         ],
         "title": "Wrapped",
@@ -3332,6 +3410,7 @@
           }
         },
         "required": [
+          "status",
           "years"
         ],
         "title": "Years",
