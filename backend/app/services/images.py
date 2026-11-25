@@ -12,6 +12,8 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 
+from app.config import settings
+
 OEMBED_URL = "https://open.spotify.com/oembed"
 _VALID_KINDS = {"artist", "album", "track"}
 _MAX_WORKERS = 8  # concurrent oEmbed fetches per batch (network-bound, no DB access)
@@ -42,6 +44,8 @@ def _ensure_table(raw_con):
 
 
 def _fetch_thumbnail(kind: str, spotify_id: str) -> str | None:
+    if not settings.covers_enabled:
+        return None  # offline mode (tests, air-gapped deploys): no cover art
     page = f"https://open.spotify.com/{kind}/{spotify_id}"
     url = f"{OEMBED_URL}?url=" + urllib.parse.quote(page, safe="")
     req = urllib.request.Request(url, headers={"User-Agent": "Rewind/1.0"})

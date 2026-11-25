@@ -8,6 +8,8 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     errorElement: <RouteError />,
+    // Shown while the first lazy page chunk loads.
+    hydrateFallbackElement: <div className="min-h-screen bg-background" aria-busy="true" />,
     children: [
       { index: true, lazy: () => import('@/features/landing/LandingPage').then(page) },
       { path: 'upload', lazy: () => import('@/features/upload/UploadPage').then(page) },

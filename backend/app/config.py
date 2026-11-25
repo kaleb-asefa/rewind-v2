@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     max_upload_files: int = 50
     max_upload_mb: float = 512
 
+    # Fetch cover art from Spotify oEmbed (no API key). False = no outbound calls.
+    covers_enabled: bool = True
+
     # Fixed timezone override (hours); None = infer from dominant conn_country
     tz_offset_hours: float | None = None
 
