@@ -50,7 +50,8 @@
           "__resetCoverCache"
         ]
       }
-    ]
+    ],
+    "jsx-a11y/prefer-tag-over-role": "off"
   },
   "ignorePatterns": [
     "dist",

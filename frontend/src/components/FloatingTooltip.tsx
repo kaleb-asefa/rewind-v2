@@ -65,3 +65,11 @@ export function useFloatingTooltip(className = 'rhythm-tooltip') {
 
   return { show, hide, node, open: state !== null }
 }
+
+/** Anchor a tooltip at a mouse position (charts whose tip follows the cursor). */
+export const atPointer = (e: { clientX: number; clientY: number }) => ({
+  left: e.clientX,
+  top: e.clientY - 8,
+  width: 0,
+  height: 16,
+})

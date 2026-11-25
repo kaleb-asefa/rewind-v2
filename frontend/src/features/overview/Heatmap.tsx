@@ -1,78 +1,26 @@
 import { useMemo, useState } from 'react'
 
 import { useApi } from '@/api/queries'
-import type { Schemas } from '@/api/types'
 import { Card } from '@/components/Card'
 import { useFloatingTooltip } from '@/components/FloatingTooltip'
-import { MONTHS_SHORT, fmtDuration, isoLocal } from '@/lib/format'
+import { fmtDuration } from '@/lib/format'
 
-type HeatmapDay = Schemas['HeatmapDay']
-
-interface CalendarDay {
-  date: Date
-  iso: string
-  info: HeatmapDay | undefined
-  padding: boolean
-}
-
-const fmtDate = (d: Date) =>
-  d.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-
-/** Sunday-aligned weeks covering the year (up to today for the current year). */
-export function buildCalendar(
-  year: number,
-  days: readonly HeatmapDay[],
-  today = new Date(),
-): CalendarDay[] {
-  const byDate = new Map(days.map((d) => [d.date, d]))
-  const yearStart = new Date(year, 0, 1)
-  const end = year === today.getFullYear() ? today : new Date(year, 11, 31)
-  const cursor = new Date(yearStart)
-  cursor.setDate(cursor.getDate() - cursor.getDay())
-  const out: CalendarDay[] = []
-  while (cursor <= end || out.length % 7 !== 0) {
-    const inRange = cursor >= yearStart && cursor <= end
-    const iso = isoLocal(cursor)
-    out.push({
-      date: new Date(cursor),
-      iso,
-      info: inRange ? byDate.get(iso) : undefined,
-      padding: !inRange,
-    })
-    cursor.setDate(cursor.getDate() + 1)
-  }
-  return out
-}
+import { buildCalendar, fmtDate, monthLabels, type CalendarDay } from './calendar'
 
 const LEVELS = [0, 1, 2, 3, 4] as const
 const DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', '']
 
 export function Heatmap() {
+  const [thisYear] = useState(() => new Date().getFullYear())
   const [year, setYear] = useState<number | undefined>(undefined)
   const query = useApi('/api/metrics/heatmap', year ? { year } : undefined, { keepPrevious: true })
   const tip = useFloatingTooltip('heatmap-tooltip')
   const data = query.data
-  const shownYear = data?.year ?? year ?? new Date().getFullYear()
+  const shownYear = data?.year ?? year ?? thisYear
   const calendar = useMemo(() => buildCalendar(shownYear, data?.days ?? []), [shownYear, data])
   const weeks = Math.ceil(calendar.length / 7)
 
-  const months = useMemo(() => {
-    let last = -1
-    return Array.from({ length: weeks }, (_, w) => {
-      const day = calendar[w * 7]
-      const m = day?.date.getMonth() ?? -1
-      if (day && !day.padding && m !== last) {
-        last = m
-        return MONTHS_SHORT[m]
-      }
-      return ''
-    })
-  }, [calendar, weeks])
+  const months = useMemo(() => monthLabels(calendar), [calendar])
 
   const showDay = (el: Element, day: CalendarDay) => {
     const info = day.info

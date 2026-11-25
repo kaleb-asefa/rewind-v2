@@ -126,7 +126,7 @@ function Footer() {
 
 /** Scroll to `#anchor` targets after client-side navigation (e.g. /#how-it-works). */
 function HashScroll() {
-  const { hash, pathname } = useLocation()
+  const { hash } = useLocation()
   useEffect(() => {
     if (!hash) return
     const id = decodeURIComponent(hash.slice(1))
@@ -135,7 +135,7 @@ function HashScroll() {
       50,
     )
     return () => clearTimeout(t)
-  }, [hash, pathname])
+  }, [hash])
   return null
 }
 

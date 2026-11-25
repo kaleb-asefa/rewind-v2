@@ -1,3 +1,4 @@
-export default function ShareDeck(_: { years: readonly number[]; onClose: () => void }) {
+export default function ShareDeck({ onClose }: { years: readonly number[]; onClose: () => void }) {
+  void onClose
   return null
 }
