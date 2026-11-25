@@ -57,10 +57,10 @@ function MoodMap({
     </text>
   )
   return (
-    <div className="relative mt-3 flex justify-center">
+    <div className="relative mx-auto mt-3 w-full max-w-[440px]">
       <svg
         viewBox={`0 0 ${S} ${S}`}
-        className="h-auto w-full max-w-[440px]"
+        className="block h-auto w-full"
         role="img"
         aria-label="Your most-played tracks by positivity and energy"
       >
