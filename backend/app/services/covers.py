@@ -140,9 +140,7 @@ def album_fallback_track_ids(raw_con, limit: int = 50) -> list[str]:
     :func:`album_cover_refs` yields albums most-played first, so this is a top-N.
     """
     refs = album_cover_refs(raw_con)
-    return [cover_id for album_id, kind, cover_id in refs.values() if kind == "track"][
-        :limit
-    ]
+    return [cover_id for album_id, kind, cover_id in refs.values() if kind == "track"][:limit]
 
 
 # ── Artist Cover Identity ──────────────────────────────────────────────────
@@ -201,15 +199,15 @@ ORDER BY SUM(ms) DESC
 """
 
 
-def _norm_artist_key(name: str | None) -> str:
-    if not name:
-        return ""
-    return (
-        unicodedata.normalize("NFKD", str(name).strip())
-        .encode("ASCII", "ignore")
-        .decode()
-        .upper()
-    )
+def norm_artist_key(name: str | None) -> str:
+    """Python mirror of DuckDB ``strip_accents(upper(trim(name)))``.
+
+    Strips combining marks only, so 'GIVĒON' == 'Giveon' while non-Latin names
+    (CJK, Cyrillic, …) keep their characters instead of collapsing to ''.
+    """
+    s = (name or "").strip().upper()
+    s = unicodedata.normalize("NFKD", s)
+    return "".join(c for c in s if not unicodedata.combining(c))
 
 
 def artist_cover_refs(raw_con) -> dict[str, tuple[str | None, str, str]]:
@@ -248,7 +246,7 @@ def attach_artist_cover_refs(raw_con, items, name_key="name"):
     refs = artist_cover_refs(raw_con)
     for it in items:
         name = it.get(name_key) or ""
-        norm_key = _norm_artist_key(name)
+        norm_key = norm_artist_key(name)
         artist_id, kind, cover_id = refs.get(norm_key, (None, None, None))
         if not kind and not cover_id:
             artist_id, kind, cover_id = refs.get(name.strip().upper(), (None, None, None))
@@ -262,7 +260,4 @@ def artist_fallback_track_ids(raw_con, limit: int = 50) -> list[str]:
     ``artist_id`` — the tier-2 covers worth pre-warming alongside the artist ids.
     """
     refs = artist_cover_refs(raw_con)
-    return [cover_id for artist_id, kind, cover_id in refs.values() if kind == "track"][
-        :limit
-    ]
-
+    return [cover_id for artist_id, kind, cover_id in refs.values() if kind == "track"][:limit]

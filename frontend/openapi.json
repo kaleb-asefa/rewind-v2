@@ -1,0 +1,4456 @@
+{
+  "components": {
+    "schemas": {
+      "ActiveDay": {
+        "additionalProperties": false,
+        "properties": {
+          "average_minutes": {
+            "title": "Average Minutes",
+            "type": "number"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "number"
+          },
+          "weekday": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekday"
+          }
+        },
+        "required": [
+          "weekday",
+          "average_minutes",
+          "total_minutes"
+        ],
+        "title": "ActiveDay",
+        "type": "object"
+      },
+      "AlbumCommitment": {
+        "additionalProperties": false,
+        "properties": {
+          "deep_share": {
+            "title": "Deep Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "deep_share"
+        ],
+        "title": "AlbumCommitment",
+        "type": "object"
+      },
+      "ArtistRank": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ArtistRankItem"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "end_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Month"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "start_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Month"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_months": {
+            "title": "Total Months",
+            "type": "integer"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "start_month",
+          "end_month",
+          "total_months",
+          "months",
+          "data"
+        ],
+        "title": "ArtistRank",
+        "type": "object"
+      },
+      "ArtistRankItem": {
+        "additionalProperties": false,
+        "properties": {
+          "artist_name": {
+            "title": "Artist Name",
+            "type": "string"
+          },
+          "cover_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Id"
+          },
+          "cover_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "artist",
+                  "album",
+                  "track"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Kind"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "monthly_ranks": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Monthly Ranks",
+            "type": "array"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "number"
+          },
+          "total_streams": {
+            "title": "Total Streams",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rank",
+          "artist_name",
+          "total_streams",
+          "total_minutes",
+          "monthly_ranks"
+        ],
+        "title": "ArtistRankItem",
+        "type": "object"
+      },
+      "Attention": {
+        "additionalProperties": false,
+        "properties": {
+          "finished": {
+            "title": "Finished",
+            "type": "number"
+          },
+          "partial": {
+            "title": "Partial",
+            "type": "number"
+          },
+          "under30": {
+            "title": "Under30",
+            "type": "number"
+          }
+        },
+        "required": [
+          "under30",
+          "partial",
+          "finished"
+        ],
+        "title": "Attention",
+        "type": "object"
+      },
+      "Audio": {
+        "additionalProperties": false,
+        "properties": {
+          "avg": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AudioAverages"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "catalog_missing": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Missing"
+          },
+          "coverage": {
+            "title": "Coverage",
+            "type": "number"
+          },
+          "has_history": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has History"
+          },
+          "matched": {
+            "title": "Matched",
+            "type": "integer"
+          },
+          "mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MajorMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "tempo_avg": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tempo Avg"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "tracks": {
+            "items": {
+              "$ref": "#/components/schemas/MoodTrack"
+            },
+            "title": "Tracks",
+            "type": "array"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "avg",
+          "tracks",
+          "coverage",
+          "matched",
+          "total"
+        ],
+        "title": "Audio",
+        "type": "object"
+      },
+      "AudioAverages": {
+        "additionalProperties": false,
+        "properties": {
+          "acousticness": {
+            "title": "Acousticness",
+            "type": "number"
+          },
+          "danceability": {
+            "title": "Danceability",
+            "type": "number"
+          },
+          "energy": {
+            "title": "Energy",
+            "type": "number"
+          },
+          "valence": {
+            "title": "Valence",
+            "type": "number"
+          },
+          "vocal": {
+            "title": "Vocal",
+            "type": "number"
+          }
+        },
+        "required": [
+          "energy",
+          "valence",
+          "danceability",
+          "acousticness",
+          "vocal"
+        ],
+        "title": "AudioAverages",
+        "type": "object"
+      },
+      "BarRace": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/BarRaceItem"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "end_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Month"
+          },
+          "entity": {
+            "enum": [
+              "artist",
+              "track",
+              "album"
+            ],
+            "title": "Entity",
+            "type": "string"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "start_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Month"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_months": {
+            "title": "Total Months",
+            "type": "integer"
+          },
+          "unit": {
+            "const": "minutes",
+            "default": "minutes",
+            "title": "Unit",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "start_month",
+          "end_month",
+          "total_months",
+          "months",
+          "entity",
+          "data"
+        ],
+        "title": "BarRace",
+        "type": "object"
+      },
+      "BarRaceItem": {
+        "additionalProperties": false,
+        "properties": {
+          "artist_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist Name"
+          },
+          "cover_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Id"
+          },
+          "cover_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "artist",
+                  "album",
+                  "track"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Kind"
+          },
+          "cumulative_minutes": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Cumulative Minutes",
+            "type": "array"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "number"
+          }
+        },
+        "required": [
+          "rank",
+          "name",
+          "total_minutes",
+          "cumulative_minutes"
+        ],
+        "title": "BarRaceItem",
+        "type": "object"
+      },
+      "Behavior": {
+        "additionalProperties": false,
+        "properties": {
+          "attention": {
+            "$ref": "#/components/schemas/Attention"
+          },
+          "longest_binge_min": {
+            "title": "Longest Binge Min",
+            "type": "integer"
+          },
+          "loops": {
+            "items": {
+              "$ref": "#/components/schemas/LoopTrack"
+            },
+            "title": "Loops",
+            "type": "array"
+          },
+          "shuffle": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shuffle"
+          },
+          "skip_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skip Rate"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "shuffle",
+          "skip_rate",
+          "longest_binge_min",
+          "attention",
+          "loops"
+        ],
+        "title": "Behavior",
+        "type": "object"
+      },
+      "BingeRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "artist_pct": {
+            "title": "Artist Pct",
+            "type": "integer"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rank",
+          "id",
+          "name",
+          "plays",
+          "minutes",
+          "artist_pct",
+          "date"
+        ],
+        "title": "BingeRecord",
+        "type": "object"
+      },
+      "Body_upload_api_upload_post": {
+        "properties": {
+          "file": {
+            "anyOf": [
+              {
+                "contentMediaType": "application/octet-stream",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
+          },
+          "files": {
+            "anyOf": [
+              {
+                "items": {
+                  "contentMediaType": "application/octet-stream",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Files"
+          }
+        },
+        "title": "Body_upload_api_upload_post",
+        "type": "object"
+      },
+      "Chart": {
+        "additionalProperties": false,
+        "properties": {
+          "entity": {
+            "enum": [
+              "artist",
+              "track",
+              "album",
+              "genre"
+            ],
+            "title": "Entity",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChartItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "range": {
+            "title": "Range",
+            "type": "string"
+          },
+          "sort": {
+            "enum": [
+              "minutes",
+              "streams"
+            ],
+            "title": "Sort",
+            "type": "string"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "entity",
+          "sort",
+          "range",
+          "items",
+          "years"
+        ],
+        "title": "Chart",
+        "type": "object"
+      },
+      "ChartItem": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist"
+          },
+          "cover_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Id"
+          },
+          "cover_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "artist",
+                  "album",
+                  "track"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Kind"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "prev_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prev Rank"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "share": {
+            "title": "Share",
+            "type": "number"
+          },
+          "streams": {
+            "title": "Streams",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rank",
+          "name",
+          "artist",
+          "minutes",
+          "streams",
+          "share",
+          "prev_rank"
+        ],
+        "title": "ChartItem",
+        "type": "object"
+      },
+      "Chronotype": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "position": {
+            "title": "Position",
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "position"
+        ],
+        "title": "Chronotype",
+        "type": "object"
+      },
+      "Concentration": {
+        "additionalProperties": false,
+        "properties": {
+          "top10_share": {
+            "title": "Top10 Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "top10_share"
+        ],
+        "title": "Concentration",
+        "type": "object"
+      },
+      "DanceableTrack": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "danceability": {
+            "title": "Danceability",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "artist",
+          "danceability"
+        ],
+        "title": "DanceableTrack",
+        "type": "object"
+      },
+      "DatedTrack": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "artist",
+          "year"
+        ],
+        "title": "DatedTrack",
+        "type": "object"
+      },
+      "DayNight": {
+        "additionalProperties": false,
+        "properties": {
+          "morning": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "night": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "DayNight",
+        "type": "object"
+      },
+      "DeepCuts": {
+        "additionalProperties": false,
+        "properties": {
+          "album_commitment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlbumCommitment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "concentration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Concentration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "no_skip": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NoSkipTrack"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "top_day_track": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TopDayTrack"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "concentration",
+          "album_commitment",
+          "top_day_track",
+          "no_skip"
+        ],
+        "title": "DeepCuts",
+        "type": "object"
+      },
+      "Discovery": {
+        "additionalProperties": false,
+        "properties": {
+          "new_artist_share": {
+            "title": "New Artist Share",
+            "type": "number"
+          },
+          "new_artists_monthly": {
+            "title": "New Artists Monthly",
+            "type": "number"
+          },
+          "one_off_share": {
+            "title": "One Off Share",
+            "type": "number"
+          },
+          "rediscoveries": {
+            "items": {
+              "$ref": "#/components/schemas/TrackPlays"
+            },
+            "title": "Rediscoveries",
+            "type": "array"
+          },
+          "rising": {
+            "items": {
+              "$ref": "#/components/schemas/RisingArtist"
+            },
+            "title": "Rising",
+            "type": "array"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "new_artist_share",
+          "new_artists_monthly",
+          "one_off_share",
+          "rediscoveries",
+          "rising"
+        ],
+        "title": "Discovery",
+        "type": "object"
+      },
+      "EnergySplit": {
+        "additionalProperties": false,
+        "properties": {
+          "wind_down": {
+            "title": "Wind Down",
+            "type": "number"
+          },
+          "workout": {
+            "title": "Workout",
+            "type": "number"
+          }
+        },
+        "required": [
+          "workout",
+          "wind_down"
+        ],
+        "title": "EnergySplit",
+        "type": "object"
+      },
+      "EnergyValue": {
+        "additionalProperties": false,
+        "properties": {
+          "energy": {
+            "title": "Energy",
+            "type": "number"
+          }
+        },
+        "required": [
+          "energy"
+        ],
+        "title": "EnergyValue",
+        "type": "object"
+      },
+      "Enrichment": {
+        "additionalProperties": false,
+        "properties": {
+          "coverage": {
+            "default": 0.0,
+            "title": "Coverage",
+            "type": "number"
+          },
+          "matched": {
+            "default": 0,
+            "title": "Matched",
+            "type": "integer"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "skipped",
+              "error"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "total": {
+            "default": 0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "Enrichment",
+        "type": "object"
+      },
+      "EraPlays": {
+        "additionalProperties": false,
+        "properties": {
+          "decade": {
+            "title": "Decade",
+            "type": "integer"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "decade",
+          "plays"
+        ],
+        "title": "EraPlays",
+        "type": "object"
+      },
+      "Evolution": {
+        "additionalProperties": false,
+        "properties": {
+          "day_night": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DayNight"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "genre_evolution": {
+            "$ref": "#/components/schemas/GenreEvolution"
+          },
+          "mainstream_trend": {
+            "items": {
+              "$ref": "#/components/schemas/PopularityPoint"
+            },
+            "title": "Mainstream Trend",
+            "type": "array"
+          },
+          "mood_trend": {
+            "items": {
+              "$ref": "#/components/schemas/MoodPoint"
+            },
+            "title": "Mood Trend",
+            "type": "array"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "genre_evolution",
+          "mood_trend",
+          "day_night",
+          "mainstream_trend"
+        ],
+        "title": "Evolution",
+        "type": "object"
+      },
+      "GenreEvolution": {
+        "additionalProperties": false,
+        "properties": {
+          "genres": {
+            "items": {
+              "$ref": "#/components/schemas/GenreShares"
+            },
+            "title": "Genres",
+            "type": "array"
+          },
+          "periods": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Periods",
+            "type": "array"
+          }
+        },
+        "required": [
+          "periods",
+          "genres"
+        ],
+        "title": "GenreEvolution",
+        "type": "object"
+      },
+      "GenrePlays": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "plays"
+        ],
+        "title": "GenrePlays",
+        "type": "object"
+      },
+      "GenreShares": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "shares": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Shares",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "shares"
+        ],
+        "title": "GenreShares",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "Health": {
+        "additionalProperties": false,
+        "properties": {
+          "catalog": {
+            "title": "Catalog",
+            "type": "boolean"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "catalog"
+        ],
+        "title": "Health",
+        "type": "object"
+      },
+      "Heatmap": {
+        "additionalProperties": false,
+        "properties": {
+          "active_days": {
+            "default": 0,
+            "title": "Active Days",
+            "type": "integer"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/HeatmapDay"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "max_streams": {
+            "default": 0,
+            "title": "Max Streams",
+            "type": "integer"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_minutes": {
+            "default": 0,
+            "title": "Total Minutes",
+            "type": "number"
+          },
+          "total_streams": {
+            "default": 0,
+            "title": "Total Streams",
+            "type": "integer"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "years",
+          "year",
+          "days"
+        ],
+        "title": "Heatmap",
+        "type": "object"
+      },
+      "HeatmapDay": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "integer"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "number"
+          },
+          "streams": {
+            "title": "Streams",
+            "type": "integer"
+          },
+          "top_artist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Artist"
+          },
+          "top_track": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Track"
+          }
+        },
+        "required": [
+          "date",
+          "streams",
+          "minutes",
+          "level",
+          "top_track",
+          "top_artist"
+        ],
+        "title": "HeatmapDay",
+        "type": "object"
+      },
+      "ImageResult": {
+        "additionalProperties": false,
+        "properties": {
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "image_url"
+        ],
+        "title": "ImageResult",
+        "type": "object"
+      },
+      "ImagesResult": {
+        "additionalProperties": false,
+        "properties": {
+          "images": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Images",
+            "type": "object"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "images"
+        ],
+        "title": "ImagesResult",
+        "type": "object"
+      },
+      "KeySplit": {
+        "additionalProperties": false,
+        "properties": {
+          "major_share": {
+            "title": "Major Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "major_share"
+        ],
+        "title": "KeySplit",
+        "type": "object"
+      },
+      "ListeningLife": {
+        "additionalProperties": false,
+        "properties": {
+          "milestones": {
+            "items": {
+              "$ref": "#/components/schemas/Milestone"
+            },
+            "title": "Milestones",
+            "type": "array"
+          },
+          "peaks": {
+            "items": {
+              "$ref": "#/components/schemas/Peak"
+            },
+            "title": "Peaks",
+            "type": "array"
+          },
+          "session_mix": {
+            "items": {
+              "$ref": "#/components/schemas/SessionShare"
+            },
+            "title": "Session Mix",
+            "type": "array"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "typical_session_minutes": {
+            "title": "Typical Session Minutes",
+            "type": "integer"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "peaks",
+          "typical_session_minutes",
+          "session_mix",
+          "milestones"
+        ],
+        "title": "ListeningLife",
+        "type": "object"
+      },
+      "LoopTrack": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "artist",
+          "count"
+        ],
+        "title": "LoopTrack",
+        "type": "object"
+      },
+      "MajorMode": {
+        "additionalProperties": false,
+        "properties": {
+          "major": {
+            "title": "Major",
+            "type": "number"
+          }
+        },
+        "required": [
+          "major"
+        ],
+        "title": "MajorMode",
+        "type": "object"
+      },
+      "Milestone": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "integer"
+          },
+          "track": {
+            "title": "Track",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "date",
+          "track",
+          "artist"
+        ],
+        "title": "Milestone",
+        "type": "object"
+      },
+      "MoodPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "valence": {
+            "title": "Valence",
+            "type": "number"
+          }
+        },
+        "required": [
+          "period",
+          "valence"
+        ],
+        "title": "MoodPoint",
+        "type": "object"
+      },
+      "MoodTrack": {
+        "additionalProperties": false,
+        "properties": {
+          "energy": {
+            "title": "Energy",
+            "type": "number"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "valence": {
+            "title": "Valence",
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "valence",
+          "energy",
+          "plays"
+        ],
+        "title": "MoodTrack",
+        "type": "object"
+      },
+      "MusicAge": {
+        "additionalProperties": false,
+        "properties": {
+          "avg_year": {
+            "title": "Avg Year",
+            "type": "integer"
+          },
+          "fresh_share": {
+            "title": "Fresh Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "avg_year",
+          "fresh_share"
+        ],
+        "title": "MusicAge",
+        "type": "object"
+      },
+      "NamedArtist": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "required": [
+          "name",
+          "id"
+        ],
+        "title": "NamedArtist",
+        "type": "object"
+      },
+      "NamedTrack": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "artist"
+        ],
+        "title": "NamedTrack",
+        "type": "object"
+      },
+      "NeverSkippedRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rank",
+          "id",
+          "name",
+          "artist",
+          "plays"
+        ],
+        "title": "NeverSkippedRecord",
+        "type": "object"
+      },
+      "NoSkipTrack": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "skip_rate": {
+            "title": "Skip Rate",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "artist",
+          "plays",
+          "skip_rate"
+        ],
+        "title": "NoSkipTrack",
+        "type": "object"
+      },
+      "NostalgiaPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "avg_year": {
+            "title": "Avg Year",
+            "type": "integer"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          }
+        },
+        "required": [
+          "period",
+          "avg_year"
+        ],
+        "title": "NostalgiaPoint",
+        "type": "object"
+      },
+      "ObsessionRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rank",
+          "id",
+          "name",
+          "artist",
+          "count",
+          "date"
+        ],
+        "title": "ObsessionRecord",
+        "type": "object"
+      },
+      "OverTime": {
+        "additionalProperties": false,
+        "properties": {
+          "music_age": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MusicAge"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nostalgia": {
+            "items": {
+              "$ref": "#/components/schemas/NostalgiaPoint"
+            },
+            "title": "Nostalgia",
+            "type": "array"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "time_machine": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeMachine"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/YearHighlights"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "years",
+          "music_age",
+          "time_machine",
+          "nostalgia"
+        ],
+        "title": "OverTime",
+        "type": "object"
+      },
+      "Peak": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "number"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "minutes",
+          "period"
+        ],
+        "title": "Peak",
+        "type": "object"
+      },
+      "PersonalityTrait": {
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "left": {
+            "title": "Left",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "number"
+          },
+          "right": {
+            "title": "Right",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "icon",
+          "left",
+          "right",
+          "position"
+        ],
+        "title": "PersonalityTrait",
+        "type": "object"
+      },
+      "PopularityPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "popularity": {
+            "title": "Popularity",
+            "type": "number"
+          }
+        },
+        "required": [
+          "period",
+          "popularity"
+        ],
+        "title": "PopularityPoint",
+        "type": "object"
+      },
+      "Rhythm": {
+        "additionalProperties": false,
+        "properties": {
+          "busiest_weekday": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Busiest Weekday"
+          },
+          "chronotype": {
+            "$ref": "#/components/schemas/Chronotype"
+          },
+          "hourly": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Hourly",
+            "type": "array"
+          },
+          "monthly": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Monthly",
+            "type": "array"
+          },
+          "peak_hour": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peak Hour"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "streak": {
+            "$ref": "#/components/schemas/Streak"
+          },
+          "total_streams": {
+            "title": "Total Streams",
+            "type": "integer"
+          },
+          "weekday": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Weekday",
+            "type": "array"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "hourly",
+          "peak_hour",
+          "weekday",
+          "busiest_weekday",
+          "monthly",
+          "chronotype",
+          "streak",
+          "total_streams"
+        ],
+        "title": "Rhythm",
+        "type": "object"
+      },
+      "RisingArtist": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "share": {
+            "title": "Share",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "share",
+          "id"
+        ],
+        "title": "RisingArtist",
+        "type": "object"
+      },
+      "SessionDeleted": {
+        "additionalProperties": false,
+        "properties": {
+          "deleted": {
+            "title": "Deleted",
+            "type": "boolean"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "deleted"
+        ],
+        "title": "SessionDeleted",
+        "type": "object"
+      },
+      "SessionShare": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "share": {
+            "title": "Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "share"
+        ],
+        "title": "SessionShare",
+        "type": "object"
+      },
+      "SkippedRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "skip_pct": {
+            "title": "Skip Pct",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rank",
+          "id",
+          "name",
+          "artist",
+          "plays",
+          "skip_pct"
+        ],
+        "title": "SkippedRecord",
+        "type": "object"
+      },
+      "SoundDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "danceable": {
+            "items": {
+              "$ref": "#/components/schemas/DanceableTrack"
+            },
+            "title": "Danceable",
+            "type": "array"
+          },
+          "energy_split": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergySplit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "key": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KeySplit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "tempo": {
+            "$ref": "#/components/schemas/TempoSpread"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "tempo",
+          "key",
+          "danceable",
+          "energy_split"
+        ],
+        "title": "SoundDetail",
+        "type": "object"
+      },
+      "Streak": {
+        "additionalProperties": false,
+        "properties": {
+          "active_days": {
+            "title": "Active Days",
+            "type": "integer"
+          },
+          "current": {
+            "title": "Current",
+            "type": "integer"
+          },
+          "longest": {
+            "title": "Longest",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "longest",
+          "current",
+          "active_days"
+        ],
+        "title": "Streak",
+        "type": "object"
+      },
+      "Superlatives": {
+        "additionalProperties": false,
+        "properties": {
+          "binges": {
+            "items": {
+              "$ref": "#/components/schemas/BingeRecord"
+            },
+            "title": "Binges",
+            "type": "array"
+          },
+          "most_skipped": {
+            "items": {
+              "$ref": "#/components/schemas/SkippedRecord"
+            },
+            "title": "Most Skipped",
+            "type": "array"
+          },
+          "never_skipped": {
+            "items": {
+              "$ref": "#/components/schemas/NeverSkippedRecord"
+            },
+            "title": "Never Skipped",
+            "type": "array"
+          },
+          "obsession": {
+            "items": {
+              "$ref": "#/components/schemas/ObsessionRecord"
+            },
+            "title": "Obsession",
+            "type": "array"
+          },
+          "range": {
+            "title": "Range",
+            "type": "string"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "years": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "range",
+          "obsession",
+          "binges",
+          "most_skipped",
+          "never_skipped",
+          "years"
+        ],
+        "title": "Superlatives",
+        "type": "object"
+      },
+      "Taste": {
+        "additionalProperties": false,
+        "properties": {
+          "avg_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Year"
+          },
+          "catalog_missing": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Missing"
+          },
+          "distinct_genres": {
+            "title": "Distinct Genres",
+            "type": "integer"
+          },
+          "eras": {
+            "items": {
+              "$ref": "#/components/schemas/EraPlays"
+            },
+            "title": "Eras",
+            "type": "array"
+          },
+          "gems": {
+            "items": {
+              "$ref": "#/components/schemas/TrackPlays"
+            },
+            "title": "Gems",
+            "type": "array"
+          },
+          "genres": {
+            "items": {
+              "$ref": "#/components/schemas/GenrePlays"
+            },
+            "title": "Genres",
+            "type": "array"
+          },
+          "has_history": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has History"
+          },
+          "mainstream": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mainstream"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "genres",
+          "mainstream",
+          "distinct_genres",
+          "eras",
+          "avg_year",
+          "gems"
+        ],
+        "title": "Taste",
+        "type": "object"
+      },
+      "TempoBucket": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "label",
+          "plays"
+        ],
+        "title": "TempoBucket",
+        "type": "object"
+      },
+      "TempoSpread": {
+        "additionalProperties": false,
+        "properties": {
+          "buckets": {
+            "items": {
+              "$ref": "#/components/schemas/TempoBucket"
+            },
+            "title": "Buckets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "buckets"
+        ],
+        "title": "TempoSpread",
+        "type": "object"
+      },
+      "TimeMachine": {
+        "additionalProperties": false,
+        "properties": {
+          "newest": {
+            "$ref": "#/components/schemas/DatedTrack"
+          },
+          "oldest": {
+            "$ref": "#/components/schemas/DatedTrack"
+          }
+        },
+        "required": [
+          "oldest",
+          "newest"
+        ],
+        "title": "TimeMachine",
+        "type": "object"
+      },
+      "TopAlbum": {
+        "additionalProperties": false,
+        "properties": {
+          "album_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Album Id"
+          },
+          "album_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Album Name"
+          },
+          "artist_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist Name"
+          },
+          "cover_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Id"
+          },
+          "cover_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "artist",
+                  "album",
+                  "track"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Kind"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "number"
+          },
+          "total_streams": {
+            "title": "Total Streams",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "album_name",
+          "artist_name",
+          "album_id",
+          "cover_kind",
+          "cover_id",
+          "total_streams",
+          "total_minutes"
+        ],
+        "title": "TopAlbum",
+        "type": "object"
+      },
+      "TopArtist": {
+        "additionalProperties": false,
+        "properties": {
+          "artist_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist Id"
+          },
+          "artist_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist Name"
+          },
+          "cover_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Id"
+          },
+          "cover_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "artist",
+                  "album",
+                  "track"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Kind"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "number"
+          },
+          "total_streams": {
+            "title": "Total Streams",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "artist_name",
+          "artist_id",
+          "cover_kind",
+          "cover_id",
+          "total_streams",
+          "total_minutes"
+        ],
+        "title": "TopArtist",
+        "type": "object"
+      },
+      "TopDayTrack": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "artist",
+          "count",
+          "date"
+        ],
+        "title": "TopDayTrack",
+        "type": "object"
+      },
+      "TopTrack": {
+        "additionalProperties": false,
+        "properties": {
+          "artist_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist Name"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "number"
+          },
+          "total_streams": {
+            "title": "Total Streams",
+            "type": "integer"
+          },
+          "track_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track Id"
+          },
+          "track_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track Name"
+          }
+        },
+        "required": [
+          "track_name",
+          "artist_name",
+          "track_id",
+          "total_streams",
+          "total_minutes"
+        ],
+        "title": "TopTrack",
+        "type": "object"
+      },
+      "TotalSongs": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_songs": {
+            "title": "Total Songs",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total_songs"
+        ],
+        "title": "TotalSongs",
+        "type": "object"
+      },
+      "TotalTime": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "number"
+          }
+        },
+        "required": [
+          "total_minutes"
+        ],
+        "title": "TotalTime",
+        "type": "object"
+      },
+      "TrackPlays": {
+        "additionalProperties": false,
+        "properties": {
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "artist",
+          "plays"
+        ],
+        "title": "TrackPlays",
+        "type": "object"
+      },
+      "TrackRank": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/TrackRankItem"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "end_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Month"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Months",
+            "type": "array"
+          },
+          "start_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Month"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_months": {
+            "title": "Total Months",
+            "type": "integer"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "start_month",
+          "end_month",
+          "total_months",
+          "months",
+          "data"
+        ],
+        "title": "TrackRank",
+        "type": "object"
+      },
+      "TrackRankItem": {
+        "additionalProperties": false,
+        "properties": {
+          "artist_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist Name"
+          },
+          "cover_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Id"
+          },
+          "cover_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "artist",
+                  "album",
+                  "track"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Kind"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "monthly_ranks": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Monthly Ranks",
+            "type": "array"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "total_minutes": {
+            "title": "Total Minutes",
+            "type": "number"
+          },
+          "total_streams": {
+            "title": "Total Streams",
+            "type": "integer"
+          },
+          "track_name": {
+            "title": "Track Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "track_name",
+          "artist_name",
+          "total_streams",
+          "total_minutes",
+          "monthly_ranks"
+        ],
+        "title": "TrackRankItem",
+        "type": "object"
+      },
+      "UploadResult": {
+        "additionalProperties": false,
+        "properties": {
+          "enrichment": {
+            "$ref": "#/components/schemas/Enrichment"
+          },
+          "files_processed": {
+            "title": "Files Processed",
+            "type": "integer"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "total_rows": {
+            "title": "Total Rows",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "message",
+          "files_processed",
+          "total_rows",
+          "enrichment"
+        ],
+        "title": "UploadResult",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "Wrapped": {
+        "additionalProperties": false,
+        "properties": {
+          "personality": {
+            "items": {
+              "$ref": "#/components/schemas/PersonalityTrait"
+            },
+            "title": "Personality",
+            "type": "array"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Year"
+          }
+        },
+        "required": [
+          "personality"
+        ],
+        "title": "Wrapped",
+        "type": "object"
+      },
+      "YearHighlights": {
+        "additionalProperties": false,
+        "properties": {
+          "summer_track": {
+            "$ref": "#/components/schemas/NamedTrack"
+          },
+          "top_artist": {
+            "$ref": "#/components/schemas/NamedArtist"
+          },
+          "top_track": {
+            "$ref": "#/components/schemas/NamedTrack"
+          },
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year",
+          "top_artist",
+          "top_track",
+          "summer_track"
+        ],
+        "title": "YearHighlights",
+        "type": "object"
+      },
+      "YearOption": {
+        "additionalProperties": false,
+        "properties": {
+          "year": {
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "year"
+        ],
+        "title": "YearOption",
+        "type": "object"
+      },
+      "Years": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "years": {
+            "items": {
+              "$ref": "#/components/schemas/YearOption"
+            },
+            "title": "Years",
+            "type": "array"
+          }
+        },
+        "required": [
+          "years"
+        ],
+        "title": "Years",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Rewind API",
+    "version": "2.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "description": "Liveness probe (used by the Docker healthcheck). No session required.",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/api/image": {
+      "get": {
+        "description": "Return a cached Spotify cover URL for an artist/album/track id (fetching\nit from oEmbed on a cache miss).",
+        "operationId": "get_image_api_image_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "enum": [
+                "artist",
+                "album",
+                "track"
+              ],
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Image"
+      }
+    },
+    "/api/images": {
+      "get": {
+        "description": "Batch-resolve cover URLs for up to 200 comma-separated ids in one call.\nCache misses are fetched concurrently, so a chart's covers land together.",
+        "operationId": "get_images_api_images_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "enum": [
+                "artist",
+                "album",
+                "track"
+              ],
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ids",
+            "required": true,
+            "schema": {
+              "title": "Ids",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Images"
+      }
+    },
+    "/api/metrics/active-day": {
+      "get": {
+        "description": "Weekday with the most listening, plus average listening per that weekday.",
+        "operationId": "get_active_day_api_metrics_active_day_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveDay"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Active Day"
+      }
+    },
+    "/api/metrics/artist-rank": {
+      "get": {
+        "description": "Weekly EWMA-smoothed artist ranks for the rank-climb chart.",
+        "operationId": "get_artist_rank_api_metrics_artist_rank_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtistRank"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Artist Rank"
+      }
+    },
+    "/api/metrics/audio": {
+      "get": {
+        "description": "Audio-feature profile for the \"Your Sound\" chapter, from the enriched\ntrack_features slice: play-weighted average mood/energy/etc., per-track\nvalence/energy for the mood map, and catalog coverage. Empty when the\ntrack_features slice is missing (unenriched session).",
+        "operationId": "get_audio_api_metrics_audio_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Audio"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Audio"
+      }
+    },
+    "/api/metrics/bar-race": {
+      "get": {
+        "description": "Cumulative-listening bar race frames (monthly) for artist / track / album.",
+        "operationId": "get_bar_race_api_metrics_bar_race_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "entity",
+            "required": false,
+            "schema": {
+              "default": "artist",
+              "enum": [
+                "artist",
+                "track",
+                "album"
+              ],
+              "title": "Entity",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 12,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarRace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Bar Race"
+      }
+    },
+    "/api/metrics/behavior": {
+      "get": {
+        "description": "Listening-habit profile for the \"How You Listen\" chapter, from history only\n(100% coverage, no catalog dependency). shuffle=None when history is missing so\nthe frontend keeps its sample fallback.\n\n\"Skip\" is defined as pressing next (reason_end = 'fwdbtn') \u2014 a deliberate action,\nmore reliable than the coarse `skipped` flag or a raw <30s cutoff.",
+        "operationId": "get_behavior_api_metrics_behavior_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Behavior"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Behavior"
+      }
+    },
+    "/api/metrics/chart": {
+      "get": {
+        "description": "Numbered Top-N leaderboard for artist / track / album / genre, ranked by\nminutes or streams, over all time / a year / the last 4 weeks / 6 months.\nGenres need the enriched track_features slice \u2192 empty items when unenriched.",
+        "operationId": "get_chart_api_metrics_chart_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "entity",
+            "required": false,
+            "schema": {
+              "default": "artist",
+              "title": "Entity",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "minutes",
+              "title": "Sort",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "range",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Range",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Chart"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Chart"
+      }
+    },
+    "/api/metrics/deep-cuts": {
+      "get": {
+        "description": "Loyalty and commitment deep cuts (history only): the top 10 artists' share\nof plays, full-album vs single listening, the track binged most in one day,\nand the heavily-played favourite you almost never skip.",
+        "operationId": "get_deep_cuts_api_metrics_deep_cuts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeepCuts"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Deep Cuts"
+      }
+    },
+    "/api/metrics/discovery": {
+      "get": {
+        "description": "Discovery and loyalty patterns from history, with no catalog dependency.\n\nArtists count as new for all plays in the month they first appear. A\nrediscovery is a track played again after a 60-day gap. Momentum compares\nthe latest 90 days against the preceding 90-day period.",
+        "operationId": "get_discovery_api_metrics_discovery_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Discovery"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Discovery"
+      }
+    },
+    "/api/metrics/evolution": {
+      "get": {
+        "description": "Taste-shift trends for the \"How Your Taste Changes\" chapter, from the\nenriched track_features slice: genre mix per year, average positivity and\npopularity per year, and a morning-vs-late-night energy compare. Empty when\nunenriched \u2192 the frontend keeps its sample fallback.\n\nWith a year selected every trend switches from year-by-year to month-by-month\ninside that year; the response shape is unchanged (periods stay strings).",
+        "operationId": "get_evolution_api_metrics_evolution_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Evolution"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Evolution"
+      }
+    },
+    "/api/metrics/heatmap": {
+      "get": {
+        "description": "Daily listening activity for a GitHub-style calendar heatmap.\n\nReturns every year present in the history plus, for the requested year\n(default / out of range: the most recent), one entry per active day with its\nstream count, minutes, an adaptive intensity level and that day's top track.",
+        "operationId": "get_heatmap_api_metrics_heatmap_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Year"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Heatmap"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Heatmap"
+      }
+    },
+    "/api/metrics/listening-life": {
+      "get": {
+        "description": "Peak listening periods, session pace, and chronological play milestones.\n\nAll values use music plays from history. Peak day, week, and month are\nbased on listened time; sessions split after 30 minutes without a play.",
+        "operationId": "get_listening_life_api_metrics_listening_life_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListeningLife"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Listening Life"
+      }
+    },
+    "/api/metrics/over-time": {
+      "get": {
+        "description": "Year-by-year highlights plus release-year context for the \"Your Music,\nOver Time\" chapter. Per-year top artist / top track / song-of-summer come\nfrom history; music age, oldest/newest tracks and the nostalgia trend need\nthe enriched track_features slice and stay empty when unenriched.\n\nWith a year selected the highlights narrow to that year and the nostalgia\ntrend switches from year-by-year to month-by-month inside it.",
+        "operationId": "get_over_time_api_metrics_over_time_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverTime"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Over Time"
+      }
+    },
+    "/api/metrics/rhythm": {
+      "get": {
+        "description": "Temporal listening patterns for the \"When You Listen\" chapter: plays by\nhour of day, weekday and month of year, plus daily streaks and a chronotype\nscore. Timestamps are shifted from UTC into the user's local time (derived\nfrom their dominant conn_country) so hours read as wall-clock.",
+        "operationId": "get_rhythm_api_metrics_rhythm_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rhythm"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Rhythm"
+      }
+    },
+    "/api/metrics/sound-detail": {
+      "get": {
+        "description": "Audio-detail spread and standouts for \"The Detail In Your Sound\": tempo\ndistribution, major/minor (bright vs moody) split, most danceable tracks, and\na high-vs-low energy (workout vs wind-down) split. From the enriched\ntrack_features slice; empty when unenriched \u2192 the frontend keeps its sample.",
+        "operationId": "get_sound_detail_api_metrics_sound_detail_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoundDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Sound Detail"
+      }
+    },
+    "/api/metrics/superlatives": {
+      "get": {
+        "description": "History-only \"records\" for the Charts superlatives section, viewable\nper year or all-time: obsession, binges, most/never skipped.",
+        "operationId": "get_superlatives_api_metrics_superlatives_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Range",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Superlatives"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Superlatives"
+      }
+    },
+    "/api/metrics/taste": {
+      "get": {
+        "description": "Genre / era / popularity profile for the \"Your Taste\" chapter, from the\nenriched track_features slice. Empty genres when unenriched \u2192 the frontend\nkeeps its sample fallback.",
+        "operationId": "get_taste_api_metrics_taste_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Taste"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Taste"
+      }
+    },
+    "/api/metrics/top-album": {
+      "get": {
+        "operationId": "get_top_album_api_metrics_top_album_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopAlbum"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Top Album"
+      }
+    },
+    "/api/metrics/top-artist": {
+      "get": {
+        "operationId": "get_top_artist_api_metrics_top_artist_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopArtist"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Top Artist"
+      }
+    },
+    "/api/metrics/top-track": {
+      "get": {
+        "operationId": "get_top_track_api_metrics_top_track_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopTrack"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Top Track"
+      }
+    },
+    "/api/metrics/total-songs": {
+      "get": {
+        "description": "Number of distinct Spotify tracks in the listening history.",
+        "operationId": "get_total_songs_api_metrics_total_songs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TotalSongs"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Total Songs"
+      }
+    },
+    "/api/metrics/total-time": {
+      "get": {
+        "operationId": "get_total_time_api_metrics_total_time_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TotalTime"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Total Time"
+      }
+    },
+    "/api/metrics/track-rank": {
+      "get": {
+        "description": "Weekly EWMA-smoothed track ranks for the rank-climb chart.",
+        "operationId": "get_track_rank_api_metrics_track_rank_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrackRank"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Track Rank"
+      }
+    },
+    "/api/metrics/wrapped": {
+      "get": {
+        "description": "Finale personality synthesis: traits from history (loyalty, chronotype,\nskip, shuffle) plus one catalog trait (mainstream, from track_features).",
+        "operationId": "get_wrapped_api_metrics_wrapped_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "title": "Year",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wrapped"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Wrapped"
+      }
+    },
+    "/api/metrics/years": {
+      "get": {
+        "description": "Year options for the explore-page filter. Empty list (never a 500) when the\nsession has no history yet \u2014 the frontend then shows \"All time\" alone.",
+        "operationId": "get_years_api_metrics_years_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Years"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Years"
+      }
+    },
+    "/api/session": {
+      "delete": {
+        "description": "Permanently delete the caller's uploaded history and cached covers.\n\nThe browser should then forget its ticket and mint a new one.",
+        "operationId": "delete_current_session_api_session_delete",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDeleted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Delete Current Session"
+      }
+    },
+    "/api/upload": {
+      "post": {
+        "description": "Ingest one or more Spotify Extended Streaming History JSON files, then\nenrich them against the catalog and warm the cover cache in the background.",
+        "operationId": "upload_api_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_api_upload_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload"
+      }
+    }
+  }
+}

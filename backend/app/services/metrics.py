@@ -5,11 +5,13 @@ reused across routers: rank smoothing, bar-race accumulation, heatmap levels,
 listening streaks, chronotype, timezone resolution and genre bucketing.
 """
 
-import os
 from datetime import date, timedelta
 
+from app.config import settings
+from app.db import Con, memo_get, memo_set, ticket_of
 
-def _generate_month_sequence(start_str: str, end_str: str) -> list[str]:
+
+def generate_month_sequence(start_str: str, end_str: str) -> list[str]:
     try:
         start_y, start_m = int(start_str[:4]), int(start_str[5:7])
         end_y, end_m = int(end_str[:4]), int(end_str[5:7])
@@ -26,7 +28,7 @@ def _generate_month_sequence(start_str: str, end_str: str) -> list[str]:
     return months
 
 
-def _generate_week_sequence(start_str: str, end_str: str) -> list[str]:
+def generate_week_sequence(start_str: str, end_str: str) -> list[str]:
     """All ISO week-start dates (inclusive) between two ``date_trunc('week')`` values."""
     try:
         start = date.fromisoformat(start_str[:10])
@@ -41,7 +43,7 @@ def _generate_week_sequence(start_str: str, end_str: str) -> list[str]:
     return weeks
 
 
-def _smoothed_rank_frames(
+def smoothed_rank_frames(
     monthly_rows: list,
     key_len: int,
     limit: int,
@@ -80,9 +82,7 @@ def _smoothed_rank_frames(
         return [], []
 
     sorted_months = sorted(month_map.keys())
-    full_months = (
-        _generate_week_sequence(sorted_months[0], sorted_months[-1]) or sorted_months
-    )
+    full_months = generate_week_sequence(sorted_months[0], sorted_months[-1]) or sorted_months
 
     entities = list(lifetime.keys())
     ewma = {k: 0.0 for k in entities}
@@ -135,7 +135,7 @@ def _smoothed_rank_frames(
     return full_months, result
 
 
-def _compute_bar_race(monthly_rows: list, key_len: int, limit: int):
+def compute_bar_race(monthly_rows: list, key_len: int, limit: int):
     """All-time bar race signal: running SUM(ms) per entity across months.
 
     ``monthly_rows`` are ``(month, *key_cols, ms)``. Returns
@@ -157,9 +157,7 @@ def _compute_bar_race(monthly_rows: list, key_len: int, limit: int):
         return [], []
 
     sorted_months = sorted(month_map.keys())
-    full_months = (
-        _generate_month_sequence(sorted_months[0], sorted_months[-1]) or sorted_months
-    )
+    full_months = generate_month_sequence(sorted_months[0], sorted_months[-1]) or sorted_months
 
     cumulative: dict[tuple, list] = {k: [] for k in lifetime}
     running: dict[tuple, int] = {k: 0 for k in lifetime}
@@ -174,12 +172,11 @@ def _compute_bar_race(monthly_rows: list, key_len: int, limit: int):
 
     ordered = sorted(featured, key=lambda k: lifetime[k], reverse=True)
     return full_months, [
-        {"key": k, "total_ms": lifetime[k], "cumulative_ms": cumulative[k]}
-        for k in ordered
+        {"key": k, "total_ms": lifetime[k], "cumulative_ms": cumulative[k]} for k in ordered
     ]
 
 
-def _heatmap_thresholds(counts: list[int]) -> list[int]:
+def heatmap_thresholds(counts: list[int]) -> list[int]:
     """Ascending level boundaries mapping a day's stream count to a 1-4 intensity.
 
     Uses quartiles of the active-day distribution so the colour ramp adapts to
@@ -192,7 +189,7 @@ def _heatmap_thresholds(counts: list[int]) -> list[int]:
     return [ordered[min(n - 1, int(p * n))] for p in (0.25, 0.5, 0.75)]
 
 
-def _heatmap_level(count: int, thresholds: list[int]) -> int:
+def heatmap_level(count: int, thresholds: list[int]) -> int:
     if count <= 0:
         return 0
     if not thresholds:
@@ -203,7 +200,7 @@ def _heatmap_level(count: int, thresholds: list[int]) -> int:
     return 4
 
 
-_WEEKDAY_NAMES = {
+WEEKDAY_NAMES = {
     1: "Monday",
     2: "Tuesday",
     3: "Wednesday",
@@ -214,13 +211,23 @@ _WEEKDAY_NAMES = {
 }
 
 # Trend x-axis labels when a single year is in focus (month 1 → index 0).
-_MONTH_ABBR = (
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+MONTH_ABBR = (
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
 )
 
 
-def _listening_streaks(days: list) -> dict:
+def listening_streaks(days: list) -> dict:
     """Longest and latest consecutive-day streaks from sorted distinct dates."""
     if not days:
         return {"longest": 0, "current": 0, "active_days": 0}
@@ -237,7 +244,7 @@ def _listening_streaks(days: list) -> dict:
     return {"longest": longest, "current": latest, "active_days": len(days)}
 
 
-def _chronotype(hourly: list[int]) -> dict:
+def chronotype(hourly: list[int]) -> dict:
     """Early-bird ↔ night-owl position (0..1) from the hourly play distribution.
 
     Hours are shifted so the listening day starts at 5AM, then a play-weighted
@@ -258,48 +265,112 @@ def _chronotype(hourly: list[int]) -> dict:
 
 
 # Spotify stores `ts` in UTC. Localize per user by their dominant conn_country so
-# the clock/weekday/heatmap read as wall-clock. Env REWIND_TZ_OFFSET_HOURS forces a
+# the clock/weekday/heatmap read as wall-clock. REWIND_TZ_OFFSET_HOURS forces a
 # fixed offset; otherwise fall back to UTC. Offsets in MINUTES (half-hour zones exist).
-_ENV_TZ_HOURS = os.getenv("REWIND_TZ_OFFSET_HOURS")
-_COUNTRY_TZ_MIN = {
-    "GB": 0, "IE": 0, "PT": 0, "IS": 0, "GH": 0, "SN": 0, "CI": 0,
-    "NG": 60, "DE": 60, "FR": 60, "ES": 60, "IT": 60, "NL": 60, "BE": 60,
-    "SE": 60, "NO": 60, "DK": 60, "PL": 60, "CH": 60, "AT": 60, "CZ": 60,
-    "HU": 60, "DZ": 60, "MA": 60,
-    "ZA": 120, "EG": 120, "GR": 120, "FI": 120, "RO": 120, "UA": 120,
-    "IL": 120, "BG": 120,
-    "ET": 180, "KE": 180, "TZ": 180, "UG": 180, "SA": 180, "TR": 180,
-    "RU": 180, "IQ": 180, "QA": 180, "KW": 180,
-    "IR": 210, "AE": 240, "AZ": 240, "GE": 240,
-    "PK": 300, "IN": 330, "LK": 330, "NP": 345, "BD": 360,
-    "TH": 420, "VN": 420, "ID": 420,
-    "SG": 480, "MY": 480, "PH": 480, "CN": 480, "HK": 480, "TW": 480,
-    "JP": 540, "KR": 540,
-    "AU": 600, "NZ": 780,
-    "BR": -180, "AR": -180, "CL": -180, "UY": -180,
-    "US": -300, "CA": -300, "CO": -300, "PE": -300, "EC": -300,
-    "MX": -360, "CR": -360, "GT": -360,
+COUNTRY_TZ_MIN = {
+    "GB": 0,
+    "IE": 0,
+    "PT": 0,
+    "IS": 0,
+    "GH": 0,
+    "SN": 0,
+    "CI": 0,
+    "NG": 60,
+    "DE": 60,
+    "FR": 60,
+    "ES": 60,
+    "IT": 60,
+    "NL": 60,
+    "BE": 60,
+    "SE": 60,
+    "NO": 60,
+    "DK": 60,
+    "PL": 60,
+    "CH": 60,
+    "AT": 60,
+    "CZ": 60,
+    "HU": 60,
+    "DZ": 60,
+    "MA": 60,
+    "ZA": 120,
+    "EG": 120,
+    "GR": 120,
+    "FI": 120,
+    "RO": 120,
+    "UA": 120,
+    "IL": 120,
+    "BG": 120,
+    "ET": 180,
+    "KE": 180,
+    "TZ": 180,
+    "UG": 180,
+    "SA": 180,
+    "TR": 180,
+    "RU": 180,
+    "IQ": 180,
+    "QA": 180,
+    "KW": 180,
+    "IR": 210,
+    "AE": 240,
+    "AZ": 240,
+    "GE": 240,
+    "PK": 300,
+    "IN": 330,
+    "LK": 330,
+    "NP": 345,
+    "BD": 360,
+    "TH": 420,
+    "VN": 420,
+    "ID": 420,
+    "SG": 480,
+    "MY": 480,
+    "PH": 480,
+    "CN": 480,
+    "HK": 480,
+    "TW": 480,
+    "JP": 540,
+    "KR": 540,
+    "AU": 600,
+    "NZ": 780,
+    "BR": -180,
+    "AR": -180,
+    "CL": -180,
+    "UY": -180,
+    "US": -300,
+    "CA": -300,
+    "CO": -300,
+    "PE": -300,
+    "EC": -300,
+    "MX": -360,
+    "CR": -360,
+    "GT": -360,
 }
 
 
-def _tz_offset_minutes(raw_con) -> int:
+def tz_offset_minutes(con: Con) -> int:
     """Minutes to add to UTC `ts` for this session's local wall-clock time.
 
     Priority: REWIND_TZ_OFFSET_HOURS override → dominant conn_country → UTC(0).
+    Memoized per session (cleared on upload), since it scans all of history.
     """
-    if _ENV_TZ_HOURS is not None:
-        try:
-            return int(round(float(_ENV_TZ_HOURS) * 60))
-        except ValueError:
-            pass
+    if settings.tz_offset_hours is not None:
+        return round(settings.tz_offset_hours * 60)
+    ticket = ticket_of(con)
+    if ticket:
+        cached = memo_get(ticket, "tz_offset")
+        if isinstance(cached, int):
+            return cached
     try:
-        row = raw_con.execute(
+        row = con.execute(
             "SELECT conn_country FROM history WHERE conn_country IS NOT NULL "
             "GROUP BY conn_country ORDER BY COUNT(*) DESC LIMIT 1"
         ).fetchone()
     except Exception:
-        row = None
-    return _COUNTRY_TZ_MIN.get(row[0] if row else None, 0)
+        return 0  # no history table yet — don't memoize
+    offset = COUNTRY_TZ_MIN.get(row[0], 0) if row else 0
+    if ticket:
+        memo_set(ticket, "tz_offset", offset)
+    return offset
 
 
 # Spotify's "energy" is largely a loudness/production proxy — its own docs list
@@ -310,38 +381,71 @@ def _tz_offset_minutes(raw_con) -> int:
 # inflation is ~0.10-0.15 on the 0-1 scale; 0.12 is the single value that pulls chill
 # tracks back to the calm half without flipping genuinely energetic tracks out of it.
 # Applied only to these genres (a global shift would wrongly drag pop/latin/EDM down).
-_ENERGY_LOUDNESS_ADJ = 0.12
+ENERGY_LOUDNESS_ADJ = 0.12
 
 
 # Spotify's raw genre tags are hyper-granular ("north carolina hip hop"); fold the
 # primary tag into a handful of everyday buckets for a readable breakdown. First
 # match wins, so order matters (specific before generic; "pop" before "dance").
-_GENRE_RULES = [
+GENRE_RULES = [
     ("K-Pop", ("k-pop", "korean")),
     ("Afrobeats", ("amapiano", "afrobeat", "afropop", "afro house", "afro-fusion", "alte")),
-    ("Latin", ("reggaeton", "urbano", "latin", "bachata", "salsa", "cumbia", "corrido", "banda", "regional mexican", "mariachi")),
+    (
+        "Latin",
+        (
+            "reggaeton",
+            "urbano",
+            "latin",
+            "bachata",
+            "salsa",
+            "cumbia",
+            "corrido",
+            "banda",
+            "regional mexican",
+            "mariachi",
+        ),
+    ),
     ("Reggae", ("reggae", "dancehall")),
     ("Hip-Hop", ("hip hop", "hip-hop", "rap", "trap", "drill", "grime")),
     ("R&B", ("r&b", "rnb", "r & b", "soul", "funk", "motown", "urban contemporary")),
     ("Country", ("country", "americana", "bluegrass")),
     ("Jazz", ("jazz", "blues", "bossa nova")),
-    ("Classical", ("classical", "orchestra", "composer", "baroque", "opera", "soundtrack", "score")),
+    (
+        "Classical",
+        ("classical", "orchestra", "composer", "baroque", "opera", "soundtrack", "score"),
+    ),
     ("Rock", ("rock", "metal", "punk", "grunge", "emo", "hardcore")),
     ("Pop", ("pop", "alt z")),
-    ("Electronic", ("edm", "house", "techno", "trance", "dubstep", "electro", "drum and bass", "dnb", "garage", "future bass", "electronic", "dance")),
+    (
+        "Electronic",
+        (
+            "edm",
+            "house",
+            "techno",
+            "trance",
+            "dubstep",
+            "electro",
+            "drum and bass",
+            "dnb",
+            "garage",
+            "future bass",
+            "electronic",
+            "dance",
+        ),
+    ),
     ("Indie", ("indie", "alternative")),
     ("Singer-Songwriter", ("singer-songwriter", "singer songwriter")),
     ("Gospel", ("gospel", "worship", "christian")),
 ]
 
 
-def _umbrella_genre(raw: str) -> str:
+def umbrella_genre(raw: str) -> str:
     """Fold a granular Spotify genre tag into a broad, readable bucket; keep the
     raw tag (title-cased) when nothing matches rather than lumping to 'Other'."""
     g = (raw or "").strip().lower()
     if not g:
         return ""
-    for label, keys in _GENRE_RULES:
+    for label, keys in GENRE_RULES:
         if any(k in g for k in keys):
             return label
     return g.title()

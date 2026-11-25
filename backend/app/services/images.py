@@ -10,7 +10,7 @@ import time
 import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 OEMBED_URL = "https://open.spotify.com/oembed"
 _VALID_KINDS = {"artist", "album", "track"}
@@ -87,7 +87,7 @@ def get_or_fetch(raw_con, kind: str, spotify_id: str) -> str | None:
             image_url = excluded.image_url,
             fetched_at = excluded.fetched_at
         """,
-        [kind, spotify_id, url or "", datetime.now(timezone.utc)],
+        [kind, spotify_id, url or "", datetime.now(UTC)],
     )
     return url
 
@@ -102,8 +102,10 @@ def _fetch_and_store(raw_con, kind: str, pending: list[str]):
     can retry them.
     """
     with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, len(pending))) as pool:
-        results = list(zip(pending, pool.map(lambda s: _safe_fetch(kind, s), pending)))
-    now = datetime.now(timezone.utc)
+        results = list(
+            zip(pending, pool.map(lambda s: _safe_fetch(kind, s), pending), strict=False)
+        )
+    now = datetime.now(UTC)
     to_write = []
     resolved: dict[str, str | None] = {}
     transient: list[str] = []
@@ -198,8 +200,7 @@ def _uncached_ids(raw_con, kind: str, ids: list[str]) -> list[str]:
     have = {
         row[0]
         for row in raw_con.execute(
-            f"SELECT spotify_id FROM images "
-            f"WHERE kind = ? AND spotify_id IN ({placeholders})",
+            f"SELECT spotify_id FROM images WHERE kind = ? AND spotify_id IN ({placeholders})",
             [kind, *ids],
         ).fetchall()
     }
