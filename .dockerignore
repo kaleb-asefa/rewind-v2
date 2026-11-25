@@ -1,22 +1,30 @@
-# Git and IDE configs
+# VCS / editors / tooling
 .git
 .gitignore
+.github
 .vscode
 .claude
+legacy
+notebooks
+docs
 
-# Virtual environments and caches
-.venv
-.venv*
-backend/.venv
+# Secrets — never bake into an image
+**/.env
+**/.env.*
+
+# Python caches & envs
+**/.venv
 **/__pycache__
 **/*.pyc
-.pytest_cache
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
 
-# Large data files (mounted as volumes at runtime)
-data/metadata/*.parquet
-data/sessions/*.duckdb
-data/sessions/*.duckdb.wal
+# Node
+**/node_modules
+frontend/dist
+frontend/playwright-report
+frontend/test-results
 
-# Research notebooks and temporary outputs
-notebooks/
-
+# Data (mounted as volumes at runtime)
+data

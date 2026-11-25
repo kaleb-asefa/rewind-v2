@@ -1,9 +1,29 @@
+# Data (personal history, sessions, 7.5 GB catalog) — never committed
 /data
+
+# Python
 *.pyc
-__pycache__
-.vscode
-.venv
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/playwright-report/
+frontend/test-results/
+
+# Secrets
 .env
 .env.*
 !.env.example
+
+# Editors
+.vscode/
+.idea/
+
+# Misc
 rewind.duckdb
+contract-snapshots/
