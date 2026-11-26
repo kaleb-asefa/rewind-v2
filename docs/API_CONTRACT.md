@@ -29,7 +29,11 @@ express.
   - Resolve art from `cover_kind` and `cover_id` when they're present, else from `id` plus
     the endpoint's kind. An album the catalog doesn't know has `id: null` and borrows a
     track cover.
-  - `image_url` is set only if the cover is already cached.
+  - `image_url` is set only if the cover is already cached. The cache is shared by all
+    sessions, so a cover is fetched from Spotify once per server. When Spotify rate-limits
+    (429), lookups pause for its `Retry-After` and the ids come back `null` without being
+    cached, so a later retry gets them.
+  - Track ids are always the release you played most, in every view.
   - Fill the rest through `GET /api/images?kind=&ids=`: at most 200 ids, batched by the client
     (8 per call, 3 calls in flight).
 - **Ties are deterministic.** Every ranked list has a stable tie-breaker.

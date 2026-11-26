@@ -13,7 +13,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.responses import JSONResponse
 
 from app.config import settings
-from app.db import Con, connections, get_con, invalidate, scalar
+from app.db import Con, get_con, invalidate, scalar
 from app.schemas.upload import ImageResult, ImagesResult, UploadResult
 from app.services import catalog, covers, images
 
@@ -190,14 +190,11 @@ def _collect_prewarm_sets(con: Con) -> dict[str, list[str]]:
 
 
 def _warm_covers(ticket: str, sets_by_kind: dict[str, list[str]]) -> None:
-    """Background job: warm the cover cache on a fresh cursor after the response
-    is sent. Best-effort — failures are logged, never raised."""
+    """Background job: warm the shared cover cache after the response is sent.
+    Best-effort — failures are logged, never raised."""
     try:
-        con = connections.cursor(ticket)
-        try:
-            images.prewarm_session_covers(con, sets_by_kind)
-        finally:
-            con.close()
+        with images.cover_store() as store:
+            images.prewarm_session_covers(store, sets_by_kind)
     except Exception:
         log.warning("cover pre-warm failed for session %s", ticket, exc_info=True)
 
@@ -262,7 +259,12 @@ async def upload(
 async def get_image(kind: ImageKind, id: str, con: Con = Depends(get_con)):
     """Return a cached Spotify cover URL for an artist/album/track id (fetching
     it from oEmbed on a cache miss)."""
-    url = await run_in_threadpool(images.get_or_fetch, con, kind, id)
+
+    def work() -> str | None:
+        with images.cover_store() as store:
+            return images.get_or_fetch(store, kind, id)
+
+    url = await run_in_threadpool(work)
     return {"image_url": url}
 
 
@@ -271,5 +273,10 @@ async def get_images(kind: ImageKind, ids: str, con: Con = Depends(get_con)):
     """Batch-resolve cover URLs for up to 200 comma-separated ids in one call.
     Cache misses are fetched concurrently, so a chart's covers land together."""
     id_list = [i for i in ids.split(",") if i][:MAX_BATCH_IDS]
-    result = await run_in_threadpool(images.get_or_fetch_many, con, kind, id_list)
+
+    def work() -> dict[str, str | None]:
+        with images.cover_store() as store:
+            return images.get_or_fetch_many(store, kind, id_list)
+
+    result = await run_in_threadpool(work)
     return {"images": result}

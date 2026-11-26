@@ -416,8 +416,8 @@ def test_upload_prewarms_top_covers(monkeypatch):
         assert resp.status_code == 200
 
         # TestClient runs background tasks after the response; the top tracks
-        # should now be cached in the session images table.
-        with session_con() as raw:
+        # should now be in the shared cover cache.
+        with images.cover_store() as raw:
             cached = raw.execute("SELECT count(*) FROM images WHERE kind = 'track'").fetchone()[0]
         assert cached > 0
 
@@ -471,17 +471,16 @@ def test_inline_image_url_on_charts_and_ranks(tmp_path, monkeypatch):
 
         def seed_images(kind, hit_id, miss_id):
             """Fresh cache with exactly one hit (url) and one '' miss for `kind`."""
-            with session_con() as raw:
-                images._ensure_table(raw)
+            with images.cover_store() as raw:
                 raw.execute("DELETE FROM images")
                 raw.execute(
                     "INSERT INTO images (kind, spotify_id, image_url, fetched_at) "
-                    "VALUES (?, ?, ?, now())",
+                    "VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
                     [kind, hit_id, HIT],
                 )
                 raw.execute(
                     "INSERT INTO images (kind, spotify_id, image_url, fetched_at) "
-                    "VALUES (?, ?, ?, now())",
+                    "VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
                     [kind, miss_id, ""],
                 )
 

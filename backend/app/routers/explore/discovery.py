@@ -1,12 +1,10 @@
 """Discovery & loyalty: new artists, rediscoveries, rising artists."""
 
-import contextlib
-
 from fastapi import APIRouter, Depends
 from starlette.concurrency import run_in_threadpool
 
 from app.db import Con, get_con
-from app.routers.explore._common import parse_year, year_clause, year_where
+from app.routers.explore._common import artist_id_lookup, parse_year, year_clause, year_where
 from app.schemas.explore import Discovery
 from app.services.catalog import ensure_track_features
 from app.services.metrics import tz_offset_minutes
@@ -117,18 +115,9 @@ async def get_discovery(year: str = "all", con: Con = Depends(get_con)):
                 LIMIT 4
                 """
             ).fetchall()
-            artist_ids = {}
-            with contextlib.suppress(Exception):
-                artist_ids = {
-                    row[0]: row[1]
-                    for row in con.execute(
-                        "SELECT artist_name, MAX(artist_id) FROM track_features "
-                        "WHERE artist_name IS NOT NULL AND artist_id IS NOT NULL "
-                        "GROUP BY artist_name"
-                    ).fetchall()
-                }
+            artist_id = artist_id_lookup(con)
             rising = [
-                {"name": row[0], "share": int(row[1]), "id": artist_ids.get(row[0])} for row in rows
+                {"name": row[0], "share": int(row[1]), "id": artist_id(row[0])} for row in rows
             ]
         except Exception:
             pass

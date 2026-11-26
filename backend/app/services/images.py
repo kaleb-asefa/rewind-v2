@@ -1,22 +1,37 @@
-"""Cover-art cache: fetch Spotify oEmbed thumbnails on demand, cache per session.
+"""Cover-art cache: fetch Spotify oEmbed thumbnails on demand and cache them.
 
 oEmbed needs no API key. A track's cover is its album cover; artist/album return
-their own images. Results (including misses, stored as '') are cached in the session
-DB so a cover is fetched from Spotify at most once.
+their own images. Results (including genuine misses, stored as '') live in ONE
+cache shared by every session (``cover_store()``): a cover is public per-song data,
+so it is fetched from Spotify once per server, not once per upload.
+
+Spotify rate-limits oEmbed (HTTP 429). On a 429 all outbound lookups pause for the
+``Retry-After`` the server asks for; ids hit by it are reported as transient (never
+cached as misses), and the client retries them later.
+
+Functions take a DB-API connection (``store``) so they work on the shared SQLite
+store in production and on a throwaway connection in tests.
 """
 
+import contextlib
 import json
+import logging
+import sqlite3
+import threading
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
+from pathlib import Path
 
 from app.config import settings
 
 OEMBED_URL = "https://open.spotify.com/oembed"
 _VALID_KINDS = {"artist", "album", "track"}
-_MAX_WORKERS = 8  # concurrent oEmbed fetches per batch (network-bound, no DB access)
+_MAX_WORKERS = 4  # concurrent oEmbed fetches per batch (gentle on Spotify's rate limit)
 
 # On-demand batch (/api/images) retry: tight so an HTTP call never hangs long.
 # Cached covers skip this entirely; only transient misses are retried.
@@ -43,14 +58,71 @@ def _ensure_table(raw_con):
     )
 
 
+log = logging.getLogger(__name__)
+
+
+@contextlib.contextmanager
+def cover_store() -> Iterator[sqlite3.Connection]:
+    """The server-wide cover cache (SQLite, safe across threads and processes)."""
+    path = Path(settings.covers_db)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    con = sqlite3.connect(path, timeout=15)
+    try:
+        con.execute("PRAGMA journal_mode=WAL")
+        _ensure_table(con)
+        yield con
+        con.commit()
+    finally:
+        con.close()
+
+
+class RateLimited(Exception):
+    """Spotify asked us to slow down; nothing was fetched."""
+
+
+# While Spotify rate-limits us, no outbound lookups at all (shared by all threads).
+_cooldown_lock = threading.Lock()
+_cooldown_until = 0.0
+_DEFAULT_COOLDOWN = 30.0
+_MAX_COOLDOWN = 300.0
+
+
+def _start_cooldown(retry_after: str | None) -> None:
+    global _cooldown_until
+    try:
+        seconds = float(retry_after) if retry_after else _DEFAULT_COOLDOWN
+    except ValueError:
+        seconds = _DEFAULT_COOLDOWN
+    seconds = max(1.0, min(seconds, _MAX_COOLDOWN))
+    with _cooldown_lock:
+        if time.monotonic() + seconds > _cooldown_until:
+            _cooldown_until = time.monotonic() + seconds
+            log.warning("Spotify oEmbed rate limit: pausing cover lookups for %.0fs", seconds)
+
+
+def cooling_down() -> bool:
+    with _cooldown_lock:
+        return time.monotonic() < _cooldown_until
+
+
 def _fetch_thumbnail(kind: str, spotify_id: str) -> str | None:
     if not settings.covers_enabled:
         return None  # offline mode (tests, air-gapped deploys): no cover art
+    if cooling_down():
+        raise RateLimited  # don't extend the ban by retrying during it
     page = f"https://open.spotify.com/{kind}/{spotify_id}"
     url = f"{OEMBED_URL}?url=" + urllib.parse.quote(page, safe="")
     req = urllib.request.Request(url, headers={"User-Agent": "Rewind/1.0"})
-    with urllib.request.urlopen(req, timeout=8) as resp:
-        return json.load(resp).get("thumbnail_url")
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            return json.load(resp).get("thumbnail_url")
+    except urllib.error.HTTPError as e:
+        if e.code == 429:
+            _start_cooldown(e.headers.get("Retry-After"))
+            raise RateLimited from e
+        if e.code in (400, 404):
+            return None  # unknown / unavailable id: a genuine, cacheable miss
+        raise
 
 
 def _safe_fetch(kind: str, spotify_id: str) -> tuple[bool, str | None]:
@@ -91,7 +163,7 @@ def get_or_fetch(raw_con, kind: str, spotify_id: str) -> str | None:
             image_url = excluded.image_url,
             fetched_at = excluded.fetched_at
         """,
-        [kind, spotify_id, url or "", datetime.now(UTC)],
+        [kind, spotify_id, url or "", datetime.now(UTC).isoformat()],
     )
     return url
 
@@ -109,7 +181,7 @@ def _fetch_and_store(raw_con, kind: str, pending: list[str]):
         results = list(
             zip(pending, pool.map(lambda s: _safe_fetch(kind, s), pending), strict=False)
         )
-    now = datetime.now(UTC)
+    now = datetime.now(UTC).isoformat()
     to_write = []
     resolved: dict[str, str | None] = {}
     transient: list[str] = []

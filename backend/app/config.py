@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     # Storage
     sessions_dir: Path = DATA_DIR / "sessions"
     catalog_path: Path = DATA_DIR / "metadata" / "catalog_sorted.parquet"
+    # Server-wide cover-art cache (public per-song data, shared by all sessions)
+    covers_db: Path = DATA_DIR / "cache" / "covers.sqlite3"
 
     # DuckDB guardrails for the catalog scan (never exhaust RAM on small boxes)
     duckdb_memory_limit: str = "2GB"

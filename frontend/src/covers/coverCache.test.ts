@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   CHUNK_SIZE,
   CONCURRENCY,
+  MAX_IDLE_ROUNDS,
   __resetCoverCache,
   coverRef,
   getCoverUrl,
@@ -92,12 +93,12 @@ describe('cover cache', () => {
     release.forEach((r) => r())
   })
 
-  it('stops retrying after 3 idle rounds', async () => {
+  it('stops retrying after the idle-round budget', async () => {
     vi.useFakeTimers()
     const mock = mockImages(() => ({}))
     const release = watchCover('track', 'never')
-    await vi.advanceTimersByTimeAsync(60_000)
-    expect(mock.calls).toHaveLength(1 + 3) // first try + 3 idle retry rounds
+    await vi.advanceTimersByTimeAsync(200_000)
+    expect(mock.calls).toHaveLength(1 + MAX_IDLE_ROUNDS) // first try + every idle retry round
     release()
   })
 })

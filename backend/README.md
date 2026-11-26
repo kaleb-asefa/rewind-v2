@@ -36,7 +36,7 @@ uv run mypy
 | `app/routers/upload.py` | `POST /api/upload`, `GET /api/image(s)` |
 | `app/routers/overview.py` | Overview page metrics |
 | `app/routers/explore/` | One module per Explore chapter + `charts.py`; shared SQL in `_common.py` |
-| `app/services/` | `catalog` (enrichment), `covers` (which id holds the art), `images` (oEmbed cache), `metrics` (pure computation) |
+| `app/services/` | `catalog` (enrichment), `covers` (which id holds the art), `images` (oEmbed lookups + the server-wide cover cache, with a rate-limit pause), `metrics` (pure computation) |
 | `tests/` | `fixtures.py` generates deterministic synthetic exports; `conftest.py` isolates storage/network |
 | `scripts/export_openapi.py` | Writes `frontend/openapi.json` for TypeScript type generation |
 | `scripts/contract_snapshot.py` | Captures/diffs every API response between two running servers |

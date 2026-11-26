@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends
 from starlette.concurrency import run_in_threadpool
 
 from app.db import Con, get_con, has_table, scalar
-from app.routers.explore._common import local_ts
+from app.routers.explore._common import local_ts, track_id_map
 from app.schemas.overview import (
     ActiveDay,
     Heatmap,
@@ -123,15 +123,15 @@ async def get_top_track(con: Con = Depends(get_con)):
             return {}
         row = con.execute(
             "SELECT track_name, artist_name, COUNT(*) AS streams, "
-            "COALESCE(SUM(ms_played), 0) AS ms, "
-            "MAX(replace(track_uri, 'spotify:track:', '')) "
-            "FILTER (WHERE track_uri LIKE 'spotify:track:%') AS id "
+            "COALESCE(SUM(ms_played), 0) AS ms "
             "FROM history WHERE track_name IS NOT NULL "
             "GROUP BY track_name, artist_name ORDER BY streams DESC LIMIT 1"
         ).fetchone()
         if not row:
             return {}
-        name, artist, streams, ms, track_id = row
+        name, artist, streams, ms = row
+        # The release played most (the id the charts and cover cache use).
+        track_id = track_id_map(con).get((name, artist))
         return {
             "track_name": name,
             "artist_name": artist,

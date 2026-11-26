@@ -30,6 +30,8 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, "sessions_dir", tmp_path)
     # Default: no catalog, so uploads skip enrichment (fast). Catalog tests override.
     monkeypatch.setattr(settings, "catalog_path", tmp_path / "no_catalog.parquet")
+    monkeypatch.setattr(settings, "covers_db", tmp_path / "covers.sqlite3")
+    monkeypatch.setattr(images, "_cooldown_until", 0.0)
     monkeypatch.setattr(settings, "tz_offset_hours", None)
     # Never touch the network: covers come from Spotify oEmbed over HTTP.
     monkeypatch.setattr(images, "_fetch_thumbnail", lambda kind, sid: None)

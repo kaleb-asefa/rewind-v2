@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from starlette.concurrency import run_in_threadpool
 
 from app.db import Con, get_con
-from app.routers.explore._common import parse_year, period_label, year_clause
+from app.routers.explore._common import artist_id_lookup, parse_year, period_label, year_clause
 from app.schemas.explore import OverTime
 from app.services.metrics import tz_offset_minutes
 
@@ -84,17 +84,7 @@ async def get_over_time(year: str = "all", con: Con = Depends(get_con)):
             int(r[0]): {"id": r[1], "name": r[2], "artist": r[3]} for r in summer_rows
         }
 
-        artist_ids = {}
-        try:
-            artist_ids = {
-                r[0]: r[1]
-                for r in con.execute(
-                    "SELECT artist_name, MAX(artist_id) FROM track_features "
-                    "WHERE artist_name IS NOT NULL AND artist_id IS NOT NULL GROUP BY artist_name"
-                ).fetchall()
-            }
-        except Exception:
-            artist_ids = {}
+        artist_id = artist_id_lookup(con)
 
         years = []
         for y in sorted(track_by_year):
@@ -104,7 +94,7 @@ async def get_over_time(year: str = "all", con: Con = Depends(get_con)):
             years.append(
                 {
                     "year": y,
-                    "top_artist": {"name": artist_name, "id": artist_ids.get(artist_name)},
+                    "top_artist": {"name": artist_name, "id": artist_id(artist_name)},
                     "top_track": {
                         "name": track["name"],
                         "artist": track["artist"],

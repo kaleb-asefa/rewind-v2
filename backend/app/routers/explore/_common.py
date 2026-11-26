@@ -144,16 +144,36 @@ def canonical_artist_id_map(con: Con) -> dict[str, str]:
 
 
 def track_id_map(con: Con) -> dict[tuple[str, str], str]:
-    """``{(track_name, artist_name): spotify track id}`` from the history itself."""
+    """``{(track_name, artist_name): spotify track id}`` from the history itself.
+
+    A song often exists under several ids (single, album, deluxe re-release).
+    Pick the one actually played most — the same id the charts use and the
+    cover pre-warm fetched — never an arbitrary ``MAX()``, which could land on a
+    release with no artwork. Ties break on the id, so the choice is stable.
+    """
     try:
         rows = con.execute(
             "SELECT track_name, artist_name, "
-            "MAX(replace(track_uri, 'spotify:track:', '')) FROM history "
-            "WHERE track_uri LIKE 'spotify:track:%' GROUP BY track_name, artist_name"
+            "arg_max(id, struct_pack(n := n, id := id)) FROM ("
+            "  SELECT track_name, artist_name, split_part(track_uri, ':', 3) AS id, COUNT(*) AS n"
+            "  FROM history WHERE track_uri LIKE 'spotify:track:%'"
+            "  GROUP BY track_name, artist_name, id"
+            ") GROUP BY track_name, artist_name"
         ).fetchall()
     except Exception:
         return {}
     return {(r[0], r[1]): r[2] for r in rows}
+
+
+def artist_id_lookup(con: Con):
+    """``name -> spotify artist id`` (or None), identity-based and accent-insensitive.
+
+    Resolves through the tracks actually played (history → catalog), most-played
+    id first — so 'Giveon' and 'GIVĒON' find the same photo, and a name shared
+    by two catalog artists picks the one you listen to.
+    """
+    ids = canonical_artist_id_map(con)
+    return lambda name: ids.get(covers.norm_artist_key(name)) if name else None
 
 
 def attach_image_urls(con: Con, kind: str, items: list[dict[str, Any]]) -> None:
@@ -170,7 +190,8 @@ def attach_image_urls(con: Con, kind: str, items: list[dict[str, Any]]) -> None:
         cover_id = it.get("cover_id") or it.get("id")
         if cover_id:
             by_kind.setdefault(it.get("cover_kind") or kind, []).append(cover_id)
-    url_maps = {k: images.cached_urls(con, k, ids) for k, ids in by_kind.items()}
+    with images.cover_store() as store:
+        url_maps = {k: images.cached_urls(store, k, ids) for k, ids in by_kind.items()}
     for it in items:
         cover_id = it.get("cover_id") or it.get("id")
         url_map = url_maps.get(it.get("cover_kind") or kind, {})

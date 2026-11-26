@@ -7,6 +7,8 @@ services:
     volumes:
       # Guest session databases survive restarts (auto-deleted after the TTL)
       - sessions:/data/sessions
+      # Cover-art URL cache shared by every session (public per-song data)
+      - cache:/data/cache
       # Optional, read-only: the 45M-track catalog for audio-feature enrichment
       - ./data/metadata:/data/metadata:ro
     environment:
@@ -16,3 +18,4 @@ services:
 
 volumes:
   sessions:
+  cache:

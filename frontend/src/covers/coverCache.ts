@@ -7,8 +7,8 @@
  * - ids requested in the same tick are batched per kind into `/api/images`
  *   calls of 8 ids, at most 3 in flight (cold covers cost the backend an oEmbed
  *   round-trip each, so one huge request would time out and resolve nothing);
- * - ids that don't resolve yet are retried with backoff (1.5s, 4s, 9s), batched
- *   by kind, for as long as rounds keep making progress, then stop after 3
+ * - ids that don't resolve yet are retried with backoff (1.5s … 40s), batched
+ *   by kind, for as long as rounds keep making progress, then stop after 5
  *   rounds that resolve nothing (genuine art-less ids stop costing requests);
  * - only ids some mounted component still wants are retried.
  *
@@ -20,8 +20,10 @@ import type { CoverCarrier, CoverKind } from '@/api/types'
 export const CHUNK_SIZE = 8
 export const CONCURRENCY = 3
 export const BATCH_TIMEOUT_MS = 20_000
-export const RETRY_DELAYS = [1500, 4000, 9000] as const
-export const MAX_IDLE_ROUNDS = 3
+// Long enough to outlast a Spotify rate-limit pause (the backend waits out its
+// Retry-After, typically 30–60 s) before giving up on a cover.
+export const RETRY_DELAYS = [1500, 4000, 9000, 20000, 40000] as const
+export const MAX_IDLE_ROUNDS = RETRY_DELAYS.length
 
 export interface CoverRef {
   kind: CoverKind

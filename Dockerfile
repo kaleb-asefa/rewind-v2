@@ -17,6 +17,7 @@ ENV PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
     REWIND_SESSIONS_DIR=/data/sessions \
     REWIND_CATALOG_PATH=/data/metadata/catalog_sorted.parquet \
+    REWIND_COVERS_DB=/data/cache/covers.sqlite3 \
     REWIND_FRONTEND_DIST=/app/frontend/dist
 
 WORKDIR /app/backend
@@ -25,7 +26,7 @@ RUN uv sync --frozen --no-dev --no-install-project
 COPY backend/app ./app
 COPY --from=web /web/dist /app/frontend/dist
 
-RUN useradd --system --uid 10001 rewind && mkdir -p /data/sessions /data/metadata \
+RUN useradd --system --uid 10001 rewind && mkdir -p /data/sessions /data/metadata /data/cache \
     && chown -R rewind /data
 USER rewind
 ENV PATH="/app/backend/.venv/bin:$PATH"
