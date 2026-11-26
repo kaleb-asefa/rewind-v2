@@ -115,7 +115,7 @@ export function RankClimb() {
   const empty = !active.isPending && (!periods.length || !lines.length)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-4">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <h3 className="text-headline-md tracking-tight text-on-surface">Rank Velocity Over Time</h3>
         <PillTabs
@@ -150,7 +150,7 @@ export function RankClimb() {
       </div>
       <Card
         ref={cardRef}
-        className={`relative overflow-hidden rounded-2xl p-4 shadow-xl transition-all duration-300 md:p-6 ${active.isPlaceholderData ? 'chapter-busy' : ''}`}
+        className={`glass-card--animated relative overflow-hidden rounded-2xl p-4 shadow-xl transition-all duration-300 md:p-6 ${active.isPlaceholderData ? 'chapter-busy' : ''}`}
       >
         <Playback
           playing={playing}
@@ -180,8 +180,18 @@ export function RankClimb() {
             aria-label={`Weekly rank of your top 8 ${category} over time`}
           >
             <defs>
-              <clipPath id="climb-clip">
+              {/* Grid + month labels: clipped horizontally only. */}
+              <clipPath id="climb-clip-x">
                 <rect x={L - 5} y="0" width={SVG_W - L - R + 5} height={SVG_H} />
+              </clipPath>
+              {/* Lines: also clipped to the ranked area (entries rise from just below #8). */}
+              <clipPath id="climb-clip">
+                <rect
+                  x={L - 5}
+                  y={rankY(1) - 8}
+                  width={SVG_W - L - R + 5}
+                  height={rankY(SLOTS + 0.6) - rankY(1) + 8}
+                />
               </clipPath>
             </defs>
             {Array.from({ length: SLOTS }, (_, i) => i + 1).map((r) => (
@@ -208,7 +218,7 @@ export function RankClimb() {
                 </text>
               </g>
             ))}
-            <g clipPath="url(#climb-clip)">
+            <g clipPath="url(#climb-clip-x)">
               {visible.map((m) => {
                 const x = periodX(m, winStart)
                 if (x < L - 30 || x > SVG_W - R + 30) return null
@@ -246,6 +256,8 @@ export function RankClimb() {
                   </g>
                 )
               })}
+            </g>
+            <g clipPath="url(#climb-clip)">
               {lines.map((line) =>
                 Math.round(rankAt(line.ranks, progress)) > SLOTS ? null : (
                   <path

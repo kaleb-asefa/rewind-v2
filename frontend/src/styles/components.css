@@ -259,9 +259,8 @@ footer,
 .tip-container {
   position: absolute;
   transform: translate(-50%, -50%);
-  transition:
-    left 0.1s linear,
-    top 0.1s linear;
+  /* No CSS transition: React moves the marker every animation frame, and a
+       transition here makes it trail its line (v1 rebuilt nodes per frame). */
   z-index: 20;
   will-change: left, top;
   user-select: none;
@@ -876,4 +875,13 @@ html {
 }
 .chart-row--match:hover {
   background: rgba(var(--accent-rgb), 0.14);
+}
+
+/* Cards whose contents animate every frame (bar race, rank climb): the
+   frosted-glass blur would be re-rendered behind each frame (~15 fps instead
+   of 60 in profiling). Over the plain page background it isn't visible anyway. */
+.glass-card.glass-card--animated {
+  /* Unprefixed only: the build adds -webkit-; listing both made the minifier
+     drop the standard property. */
+  backdrop-filter: none;
 }

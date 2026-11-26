@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 
 import { Card } from '@/components/Card'
 import { Icon } from '@/components/Icon'
 import { PillTabs } from '@/components/PillTabs'
 import { CoverImage } from '@/covers/CoverImage'
 import { primeCoverUrls } from '@/covers/coverCache'
-import { useFullscreen, useInView, useRafLoop } from '@/lib/hooks'
+import { useFullscreen, useInView, usePrefersReducedMotion, useRafLoop } from '@/lib/hooks'
 
 import { useExploreApi, useYearFilter } from '../yearFilterContext'
-import { niceStep, type Speed } from './climbMath'
+import { gridTicks, type Speed } from './climbMath'
 import { Playback } from './Playback'
-import { VISIBLE_N, initialRace, raceReducer, standings } from './raceState'
+import { VISIBLE_N, buildSeries, initialRace, raceReducer, standings } from './raceState'
 
 type Entity = 'artist' | 'track' | 'album'
 const MONTHS = [
@@ -46,9 +46,11 @@ export function BarRace() {
   const query = useExploreApi('/api/metrics/bar-race', { entity, limit: 12 })
   const items = useMemo(() => query.data?.data ?? [], [query.data])
   const months = useMemo(() => query.data?.months ?? [], [query.data])
-  const cums = useMemo(() => items.map((it) => it.cumulative_minutes), [items])
+  const series = useMemo(() => items.map((it) => buildSeries(it.cumulative_minutes)), [items])
   const [state, dispatch] = useReducer(raceReducer, initialRace)
-  const [speed, setSpeed] = useState<Speed>(0.5)
+  const [speed, setSpeed] = useState<Speed>(1)
+  const reducedMotion = usePrefersReducedMotion()
+  const autoplayed = useRef(false)
   const [cardRef, isFull, toggleFull] = useFullscreen<HTMLDivElement>()
   const [viewRef, inView] = useInView<HTMLDivElement>({ once: false })
   const [width, setWidth] = useState(800)
@@ -73,8 +75,16 @@ export function BarRace() {
     }
   }, [viewRef])
 
+  // Like the videos, the race starts by itself the first time it's on screen
+  // (once per page view; never with reduced motion).
+  useEffect(() => {
+    if (!inView || !series.length || autoplayed.current || reducedMotion) return
+    autoplayed.current = true
+    dispatch({ type: 'play' })
+  }, [inView, series.length, reducedMotion])
+
   useRafLoop(
-    useCallback((dt: number) => dispatch({ type: 'tick', dt, cums, speed }), [cums, speed]),
+    useCallback((dt: number) => dispatch({ type: 'tick', dt, series, speed }), [series, speed]),
     inView && items.length > 0 && (state.playing || !state.settled),
   )
 
@@ -83,17 +93,15 @@ export function BarRace() {
   const barH = Math.round(lane * 0.6)
   const avatar = Math.round(lane * 0.78)
   const usable = Math.max(50, width - RIGHT_PAD - LEFT_PAD)
-  const { values, slotOf } = standings(cums, state.progress)
+  const { values } = standings(series, state.progress, state.rank)
   const axisMax = state.axisMax || 1
-  const step = niceStep(axisMax / 6)
-  const ticks: number[] = []
-  for (let v = step; v <= axisMax && ticks.length < 10; v += step) ticks.push(v)
+  const ticks = gridTicks(axisMax, usable)
   const maxP = Math.max(0, months.length - 1)
   const watermark =
     months[Math.min(Math.max(0, Math.round(state.progress)), maxP)]?.slice(0, 4) ?? '----'
 
   return (
-    <div className="space-y-6 pt-4">
+    <div className="space-y-6">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div>
           <h3 className="text-headline-md tracking-tight text-on-surface">
@@ -141,7 +149,7 @@ export function BarRace() {
       </div>
       <Card
         ref={cardRef}
-        className={`relative overflow-hidden rounded-2xl p-4 shadow-xl md:p-6 ${query.isPlaceholderData ? 'chapter-busy' : ''}`}
+        className={`glass-card--animated relative overflow-hidden rounded-2xl p-4 shadow-xl md:p-6 ${query.isPlaceholderData ? 'chapter-busy' : ''}`}
       >
         <Playback
           playing={state.playing}
@@ -179,10 +187,16 @@ export function BarRace() {
                 {watermark}
               </div>
               <div aria-hidden className="pointer-events-none absolute inset-0 z-[5]">
-                {ticks.map((v, i) => {
-                  const x = LEFT_PAD + (v / axisMax) * usable
+                <div
+                  className="absolute top-0 whitespace-nowrap font-mono text-[10px] uppercase tracking-wider text-[var(--axis-label)]"
+                  style={{ left: LEFT_PAD }}
+                >
+                  minutes
+                </div>
+                {ticks.map(({ value, opacity }) => {
+                  const x = LEFT_PAD + (value / axisMax) * usable
                   return (
-                    <div key={i}>
+                    <div key={value} style={{ opacity }}>
                       <div
                         className="absolute w-px bg-[var(--grid-line)]"
                         style={{ left: x, top: AXIS_TOP, height: VISIBLE_N * lane }}
@@ -191,8 +205,7 @@ export function BarRace() {
                         className="absolute top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] text-[var(--axis-label)]"
                         style={{ left: x }}
                       >
-                        {v.toLocaleString()}
-                        {i === ticks.length - 1 ? ' min' : ''}
+                        {value.toLocaleString()}
                       </div>
                     </div>
                   )
@@ -204,7 +217,9 @@ export function BarRace() {
               >
                 {items.map((it, i) => {
                   const opacity = state.opacity[i] ?? 0
-                  const y = AXIS_TOP + (state.slot[i] ?? VISIBLE_N) * lane
+                  if (opacity < 0.01) return null // off the chart: don't render at all
+                  const slot = state.slot[i] ?? VISIBLE_N
+                  const y = AXIS_TOP + slot * lane
                   const barW = Math.max(2, ((values[i] ?? 0) / axisMax) * usable)
                   const avatarLeft = Math.min(
                     Math.max(LEFT_PAD + barW - avatar / 2, LEFT_PAD),
@@ -214,19 +229,19 @@ export function BarRace() {
                     <li
                       key={`${it.name}|${it.artist_name ?? ''}`}
                       aria-hidden={opacity < 0.5}
-                      className="absolute inset-x-0 top-0"
+                      className="absolute inset-x-0 top-0 will-change-transform"
                       style={{
                         height: lane,
-                        transform: `translateY(${y.toFixed(2)}px)`,
+                        transform: `translate3d(0, ${y.toFixed(2)}px, 0)`,
                         opacity,
-                        visibility: opacity < 0.01 ? 'hidden' : undefined,
+                        zIndex: Math.round((VISIBLE_N - slot) * 10),
                       }}
                     >
                       <div
                         className="absolute left-0 top-0 flex items-center justify-end font-mono text-xs font-bold text-[var(--axis-label)]"
                         style={{ width: LEFT_PAD - 6, height: lane }}
                       >
-                        {(slotOf[i] ?? VISIBLE_N) + 1}
+                        {Math.min(VISIBLE_N, Math.round(slot) + 1)}
                       </div>
                       <div
                         className="absolute rounded-full"

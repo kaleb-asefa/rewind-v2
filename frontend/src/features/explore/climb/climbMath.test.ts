@@ -27,8 +27,15 @@ describe('climb math', () => {
   })
   it('draws a path that ends at the current interpolated rank', () => {
     const d = linePath([1, 2, 3], 1.5, 0)
-    expect(d.startsWith('M ')).toBe(true)
-    expect(d.trim().endsWith(rankY(rankAt([1, 2, 3], 1.5)).toFixed(1))).toBe(true)
+    expect(d.startsWith('M')).toBe(true)
+    const end = Number(d.split(',').at(-1))
+    expect(end).toBeCloseTo(rankY(rankAt([1, 2, 3], 1.5)), 3)
+  })
+  it('never overshoots the chart on a big rank jump', () => {
+    const d = linePath([9, 9, 1, 1, 9, 9], 5, 0)
+    const ys = [...d.matchAll(/-?\d+(\.\d+)?,(-?\d+(\.\d+)?)/g)].map((m) => Number(m[2]))
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(rankY(1) - 0.01)
+    expect(Math.max(...ys)).toBeLessThanOrEqual(rankY(9) + 0.01)
   })
   it('labels weekly and monthly periods', () => {
     expect(periodLabel(['2024-03-04'], 0)).toBe('MAR 4, 2024')

@@ -55,7 +55,9 @@ export function useRafLoop(tick: (dtMs: number) => void, active: boolean) {
     let raf = 0
     let last = performance.now()
     const frame = (now: number) => {
-      tickRef.current(Math.min(now - last, 100)) // clamp after tab switches
+      // Clamp: long gaps (tab switches) and negative gaps (a frame stamped
+      // before the loop started) would otherwise jump or rewind the animation.
+      tickRef.current(Math.max(0, Math.min(now - last, 100)))
       last = now
       raf = requestAnimationFrame(frame)
     }

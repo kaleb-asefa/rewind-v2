@@ -1,4 +1,5 @@
 /** Pure geometry for the rank-climb chart (ported from v1 velocity.js). */
+import { curveMonotoneX, line } from 'd3-shape'
 
 export const SVG_W = 1000
 export const SVG_H = 440
@@ -39,10 +40,19 @@ export function rankAt(ranks: readonly number[], progress: number): number {
   return ranks[i]! + (ranks[i + 1]! - ranks[i]!) * t
 }
 
-/** Catmull-Rom → cubic Bézier path of the line drawn up to `progress`. */
+/**
+ * The line drawn up to `progress`, as a monotone cubic curve. Monotone (unlike
+ * v1's Catmull-Rom) never overshoots, so a song jumping several ranks in one
+ * week no longer swings above #1 or below the chart before settling.
+ */
+const curve = line<{ x: number; y: number }>()
+  .x((p) => p.x)
+  .y((p) => p.y)
+  .curve(curveMonotoneX)
+
 export function linePath(ranks: readonly number[], progress: number, winStart: number): string {
   if (!ranks.length) return ''
-  const current = Math.min(progress, ranks.length - 1)
+  const current = Math.min(Math.max(0, progress), ranks.length - 1)
   const pts: { x: number; y: number }[] = []
   for (let m = Math.max(0, Math.floor(winStart) - 1); m <= Math.ceil(current); m++) {
     pts.push(
@@ -52,16 +62,7 @@ export function linePath(ranks: readonly number[], progress: number, winStart: n
     )
   }
   if (!pts.length) return ''
-  const f = (n: number) => n.toFixed(1)
-  let d = `M ${f(pts[0]!.x)} ${f(pts[0]!.y)}`
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[i === 0 ? i : i - 1]!
-    const p1 = pts[i]!
-    const p2 = pts[i + 1]!
-    const p3 = pts[i + 2 < pts.length ? i + 2 : i + 1]!
-    d += ` C ${f(p1.x + (p2.x - p0.x) / 6)} ${f(p1.y + (p2.y - p0.y) / 6)}, ${f(p2.x - (p3.x - p1.x) / 6)} ${f(p2.y - (p3.y - p1.y) / 6)}, ${f(p2.x)} ${f(p2.y)}`
-  }
-  return d
+  return curve(pts) ?? ''
 }
 
 const MONTHS = [
@@ -111,6 +112,7 @@ export const isYearStart = (periods: readonly string[], i: number) =>
 /** Bar race: value at a fractional progress, linear between months. */
 export function valueAt(cum: readonly number[], p: number): number {
   if (!cum.length) return 0
+  if (!(p > 0)) return cum[0]! // also catches NaN
   const i = Math.floor(p)
   if (i >= cum.length - 1) return cum[cum.length - 1]!
   return cum[i]! + (cum[i + 1]! - cum[i]!) * (p - i)
@@ -125,3 +127,39 @@ export function niceStep(rough: number): number {
 
 export const SPEEDS = [0.25, 0.5, 1] as const
 export type Speed = (typeof SPEEDS)[number]
+
+/**
+ * Gridlines that crossfade as the axis grows: steps on a nested 1 → 5 → 10 → 50
+ * ladder (each a multiple of the one below) fade in once their lines are far
+ * enough apart and out as they crowd together, so the scale glides instead of
+ * jumping and labels from two different steps never interleave.
+ */
+export function gridTicks(axisMax: number, usablePx: number) {
+  if (!(axisMax > 0) || !(usablePx > 0)) return []
+  const MIN_PX = 64 // lines closer than this are hidden
+  const FULL_PX = 110 // …and fully visible from this spacing
+  const vis = (step: number) =>
+    Math.max(0, Math.min(1, ((step / axisMax) * usablePx - MIN_PX) / (FULL_PX - MIN_PX)))
+  const steps: number[] = []
+  for (let e = Math.floor(Math.log10(axisMax)) - 2; steps.length < 12; e++) {
+    for (const m of [1, 5]) steps.push(m * 10 ** e)
+  }
+  // Each line takes the visibility of the coarsest step it belongs to.
+  const opacityOf = new Map<number, number>()
+  for (const st of steps) {
+    const v = vis(st)
+    if (v <= 0) continue
+    for (let n = 1; n * st <= axisMax * 1.0001 && n <= 40; n++) {
+      const value = Math.round(n * st * 1e6) / 1e6
+      opacityOf.set(value, Math.max(opacityOf.get(value) ?? 0, v))
+    }
+  }
+  const ticks: { value: number; opacity: number }[] = []
+  for (const [value, o] of [...opacityOf].sort((a, b) => a[0] - b[0])) {
+    // Lines enter at the right edge as the scale grows: fade them in there too.
+    const edgePx = ((axisMax - value) / axisMax) * usablePx
+    const opacity = o * Math.max(0, Math.min(1, edgePx / 40))
+    if (opacity > 0.01) ticks.push({ value, opacity })
+  }
+  return ticks
+}
