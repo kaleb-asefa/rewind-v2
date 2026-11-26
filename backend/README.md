@@ -9,7 +9,7 @@ file, keyed by the `X-Rewind-Session` header.
 ```bash
 cd backend
 uv sync
-uv run fastapi dev app/main.py --port 8010   # http://127.0.0.1:8010, docs at /docs
+uv run uvicorn app.main:app --reload --port 8010   # http://127.0.0.1:8010, docs at /docs
 ```
 
 Settings come from `REWIND_*` environment variables (see `.env.example` and

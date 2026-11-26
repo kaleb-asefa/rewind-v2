@@ -17,7 +17,9 @@ help: ## Show this list
 
 api: ## Backend dev server (API_PORT, default 8010)
 	$(check_api_port)
-	cd backend && uv run fastapi dev app/main.py --port $(API_PORT)
+	@# Plain uvicorn, not `fastapi dev`: the FastAPI CLI opens /dev/tty itself and,
+	@# next to Vite (which reads the terminal for its key shortcuts), hangs at startup.
+	cd backend && uv run uvicorn app.main:app --reload --host 127.0.0.1 --port $(API_PORT)
 
 web: ## Frontend dev server (WEB_PORT, default 5173; proxies /api)
 	cd frontend && REWIND_API=http://127.0.0.1:$(API_PORT) npx vite --port $(WEB_PORT)
