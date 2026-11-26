@@ -56,10 +56,10 @@ src/
 ## Commands
 
 ```bash
-npm run dev          # http://localhost:5173 (proxies /api to :8000; set REWIND_API to change)
+npm run dev          # http://localhost:5173 (proxies /api to :8010; set REWIND_API to change)
 npm run build        # type-checks, then writes dist/
 npm test             # Vitest
-npm run e2e          # Playwright (starts its own backend on :8010 and Vite on :5180)
+npm run e2e          # Playwright (starts its own backend on :8011 and Vite on :5180)
 npm run lint && npm run typecheck && npm run format:check
 npm run gen:api      # after a backend response-model change (see API_CONTRACT.md)
 ```

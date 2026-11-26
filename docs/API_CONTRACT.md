@@ -1,7 +1,7 @@
 # Rewind — API Contract
 
 The **source of truth is the OpenAPI schema** generated from the backend's Pydantic
-response models (`backend/app/schemas/`). Browse it at `http://127.0.0.1:8000/docs`, or
+response models (`backend/app/schemas/`). Browse it at `http://127.0.0.1:8010/docs` (dev), or
 read the checked-in copy at `frontend/openapi.json`, from which the frontend generates
 its TypeScript types (`npm run gen:api`). This page covers the rules the schema can't
 express.

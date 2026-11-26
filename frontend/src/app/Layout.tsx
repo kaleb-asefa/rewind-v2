@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-rou
 
 import { Icon } from '@/components/Icon'
 
+import { BackendCheck } from './BackendCheck'
 import { useTheme } from './theme'
 
 const NAV = [
@@ -147,6 +148,7 @@ export function Layout() {
         <Outlet />
       </div>
       <Footer />
+      <BackendCheck />
       <ScrollRestoration />
       <HashScroll />
     </>

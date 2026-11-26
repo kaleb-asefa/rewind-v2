@@ -32,7 +32,7 @@ React SPA (Vite, TypeScript)  ──/api──▶  FastAPI  ──▶  one DuckD
 Requirements: Python 3.13 with [uv](https://docs.astral.sh/uv/), and Node 22.
 
 ```bash
-make dev        # API on :8000 + web app on http://localhost:5173
+make dev        # API on :8010 + web app on http://localhost:5173
 ```
 
 That's the same as running `make api` and `make web` in two terminals. For sample data,

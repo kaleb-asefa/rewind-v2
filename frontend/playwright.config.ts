@@ -5,7 +5,7 @@ import { defineConfig, devices } from '@playwright/test'
  * no outbound cover lookups) and the Vite dev server. Synthetic Spotify exports
  * are generated in globalSetup, so no personal data is needed.
  */
-const API = 'http://127.0.0.1:8010'
+const API = 'http://127.0.0.1:8011'
 const WEB = 'http://localhost:5180'
 
 export default defineConfig({
@@ -26,7 +26,7 @@ export default defineConfig({
   webServer: [
     {
       command:
-        'uv run --project ../backend uvicorn app.main:app --app-dir ../backend --host 127.0.0.1 --port 8010',
+        'uv run --project ../backend uvicorn app.main:app --app-dir ../backend --host 127.0.0.1 --port 8011',
       url: `${API}/api/health`,
       env: {
         REWIND_SESSIONS_DIR: 'test-results/e2e-sessions',
